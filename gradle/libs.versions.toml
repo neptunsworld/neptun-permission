@@ -1,0 +1,54 @@
+[versions]
+java = "17"
+
+gson = "2.10.1"
+guava = "33.2.0-jre"
+
+mariadb = "3.0.7"
+sql-core = "0.50.1"
+sql-dao = "0.50.1"
+sql-jdbc = "0.50.1"
+
+redisson = "3.28.0"
+
+streamline-api = "1.0-SNAPSHOT"
+
+velocity-api = "3.3.0-SNAPSHOT"
+async-velocity-api = "2.16.0"
+
+paper-api = "1.20.4-R0.1-SNAPSHOT"
+async-paper-api = "2.16.0"
+
+kyori-adventure-api = "4.17.0"
+
+[libraries]
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
+
+mariadb = { group = "org.mariadb.jdbc", name = "mariadb-java-client", version.ref = "mariadb" }
+sql-core = { group = "org.jetbrains.exposed", name = "exposed-core", version.ref = "sql-core" }
+sql-dao = { group = "org.jetbrains.exposed", name = "exposed-dao", version.ref = "sql-dao" }
+sql-jdbc = { group = "org.jetbrains.exposed", name = "exposed-jdbc", version.ref = "sql-jdbc" }
+
+redisson = { group = "org.redisson", name = "redisson", version.ref = "redisson" }
+
+streamline-api = { group = "world.neptuns.streamline", name = "streamline-api", version.ref = "streamline-api" }
+streamline-common = { group = "world.neptuns.streamline", name = "streamline-common", version.ref = "streamline-api" }
+
+async-velocity-api = { group = "com.github.shynixn.mccoroutine", name = "mccoroutine-velocity-api", version.ref = "async-velocity-api" }
+async-velocity-core = { group = "com.github.shynixn.mccoroutine", name = "mccoroutine-velocity-core", version.ref = "async-velocity-api" }
+velocity-api = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity-api" }
+
+paper-api = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper-api" }
+async-paper-api = { group = "com.github.shynixn.mccoroutine", name = "mccoroutine-bukkit-api", version.ref = "async-paper-api" }
+async-paper-core = { group = "com.github.shynixn.mccoroutine", name = "mccoroutine-bukkit-core", version.ref = "async-paper-api" }
+
+kyori-adventure-api = { group = "net.kyori", name = "adventure-api", version.ref = "kyori-adventure-api" }
+kyori-minimessage-api = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "kyori-adventure-api" }
+
+[bundles]
+database = ["redisson", "mariadb", "sql-core", "sql-dao", "sql-jdbc"]
+streamline = ["streamline-api", "streamline-common"]
+velocity = ["velocity-api", "async-velocity-api", "async-velocity-core"]
+paper = ["paper-api", "async-paper-api", "async-paper-core"]
+kyori = ["kyori-adventure-api", "kyori-minimessage-api"]
