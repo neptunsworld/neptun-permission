@@ -7,7 +7,10 @@ import java.util.*
 interface PermissionGroupController : Controller<UUID, PermissionGroup>, Updatable<UUID, PermissionGroup.Update, Any> {
 
     suspend fun getPermissionGroup(name: String): PermissionGroup?
+    suspend fun getPermissionGroups(): Set<PermissionGroup>
 
     suspend fun getDefaultGroup(): PermissionGroup?
+
+    suspend fun deletePermissionGroup(name: String)
 
 }
