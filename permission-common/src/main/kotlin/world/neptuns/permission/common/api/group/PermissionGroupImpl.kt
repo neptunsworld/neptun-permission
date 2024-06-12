@@ -11,12 +11,11 @@ class PermissionGroupImpl(
     override var priority: Int,
     override val color: TextColor,
     override val format: PermissionGroupFormat,
-    override val permissions: MutableSet<PermissionInfo>,
-    override val permissionBundles: MutableSet<PermissionBundle>,
-    override val parents: MutableSet<PermissionGroup>,
-    override val metadata: MutableMap<String, Any>,
-    override val isDefault: Boolean,
-    override val timeoutTimestamp: Long
+    override var permissions: MutableSet<PermissionInfo>,
+    override var permissionBundles: MutableSet<PermissionBundle>,
+    override var parents: MutableSet<String>,
+    override var metadata: MutableMap<String, Any>,
+    override var isDefault: Boolean
 ) : PermissionGroup {
 
     override fun collectAllPermissions(): Set<PermissionInfo> {

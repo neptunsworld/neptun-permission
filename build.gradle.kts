@@ -29,6 +29,7 @@ allprojects {
             compileOnly(libs.bundles.database)
             compileOnly(libs.bundles.streamline)
             compileOnly(libs.bundles.kyori)
+            compileOnly(libs.neptun.core.base.api)
         }
     }
 }
