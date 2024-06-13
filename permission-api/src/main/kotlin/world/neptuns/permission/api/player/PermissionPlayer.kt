@@ -1,7 +1,7 @@
 package world.neptuns.permission.api.player
 
-import world.neptuns.permission.api.group.PermissionGroup
-import world.neptuns.permission.api.permission.PermissionBundle
+import world.neptuns.permission.api.group.PermissionGroupInfo
+import world.neptuns.permission.api.permission.PermissionBundleInfo
 import world.neptuns.permission.api.permission.PermissionInfo
 import java.io.Serializable
 import java.util.*
@@ -9,9 +9,9 @@ import java.util.*
 interface PermissionPlayer : Serializable {
 
     val uuid: UUID
-    val groups: MutableSet<PermissionGroup>
+    val groups: MutableSet<PermissionGroupInfo>
 
-    val privatePermissionBundles: MutableSet<PermissionBundle>
+    val privatePermissionBundles: MutableSet<PermissionBundleInfo>
     val privatePermissions: MutableSet<PermissionInfo>
 
     var authSession: AuthSession?
@@ -22,6 +22,9 @@ interface PermissionPlayer : Serializable {
     fun onActiveGroupExpire()
 
     enum class Update {
+        PERMISSION_GROUP_ADD,
+        PERMISSION_GROUP_REMOVE,
+
         PERMISSION_BUNDLE_ADD,
         PERMISSION_BUNDLE_REMOVE,
         PERMISSION_BUNDLE_CLEAR,

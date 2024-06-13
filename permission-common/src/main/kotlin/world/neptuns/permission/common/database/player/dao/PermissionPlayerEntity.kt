@@ -4,6 +4,7 @@ import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import world.neptuns.permission.common.database.player.PermissionPlayerGroupInfoTable
+import world.neptuns.permission.common.database.player.PermissionPlayerPrivatePermissionBundleInfoTable
 import world.neptuns.permission.common.database.player.PermissionPlayerPrivatePermissionInfoTable
 import world.neptuns.permission.common.database.player.PermissionPlayerTable
 import java.util.*
@@ -14,5 +15,7 @@ class PermissionPlayerEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var authSession by PermissionPlayerTable.authSession
 
     val groups by PermissionPlayerGroupInfoEntity referrersOn PermissionPlayerGroupInfoTable.uuid
+
+    val privatePermissionBundles by PermissionPlayerPrivatePermissionBundleInfoEntity referrersOn PermissionPlayerPrivatePermissionBundleInfoTable.uuid
     val privatePermissions by PermissionPlayerPrivatePermissionInfoEntity referrersOn PermissionPlayerPrivatePermissionInfoTable.uuid
 }

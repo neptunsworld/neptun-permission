@@ -10,6 +10,5 @@ class PermissionBundleEntity(id: EntityID<Int>) : IntEntity(id) {
 
     var name by PermissionBundleTable.name
     var isAuthRequired by PermissionBundleTable.isAuthRequired
-    var timeoutTimestamp by PermissionBundleTable.timeoutTimestamp
     val permissions by PermissionBundlePermissionInfoEntity referrersOn PermissionBundleTable.name
 }

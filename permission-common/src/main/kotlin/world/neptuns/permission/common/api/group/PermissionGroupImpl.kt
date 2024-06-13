@@ -3,7 +3,8 @@ package world.neptuns.permission.common.api.group
 import net.kyori.adventure.text.format.TextColor
 import world.neptuns.permission.api.group.PermissionGroup
 import world.neptuns.permission.api.group.PermissionGroupFormat
-import world.neptuns.permission.api.permission.PermissionBundle
+import world.neptuns.permission.api.group.PermissionGroupInfo
+import world.neptuns.permission.api.permission.PermissionBundleInfo
 import world.neptuns.permission.api.permission.PermissionInfo
 
 class PermissionGroupImpl(
@@ -12,7 +13,7 @@ class PermissionGroupImpl(
     override val color: TextColor,
     override val format: PermissionGroupFormat,
     override var permissions: MutableSet<PermissionInfo>,
-    override var permissionBundles: MutableSet<PermissionBundle>,
+    override var permissionBundles: MutableSet<PermissionBundleInfo>,
     override var parents: MutableSet<String>,
     override var metadata: MutableMap<String, Any>,
     override var isDefault: Boolean
@@ -28,6 +29,10 @@ class PermissionGroupImpl(
 
     override fun hasPermission(permission: String): Boolean {
         TODO("Not yet implemented")
+    }
+
+    override fun toGroupInfo(timeoutTimestamp: Long): PermissionGroupInfo {
+        return PermissionGroupInfoImpl(this.name, timeoutTimestamp)
     }
 
 }

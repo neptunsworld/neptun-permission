@@ -9,13 +9,9 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import world.neptuns.permission.api.group.PermissionGroup
 import world.neptuns.permission.api.group.PermissionGroupFormat
 import world.neptuns.permission.api.group.PermissionGroupService
-import world.neptuns.permission.api.permission.PermissionBundle
+import world.neptuns.permission.api.permission.PermissionBundleInfo
 import world.neptuns.permission.api.permission.PermissionInfo
-import world.neptuns.permission.common.api.permission.PermissionInfoImpl
-import world.neptuns.permission.common.database.group.PermissionGroupMetadataTable
-import world.neptuns.permission.common.database.group.PermissionGroupParentInfoTable
-import world.neptuns.permission.common.database.group.PermissionGroupPermissionInfoTable
-import world.neptuns.permission.common.database.group.PermissionGroupTable
+import world.neptuns.permission.common.database.group.*
 import world.neptuns.permission.common.database.group.dao.*
 import world.neptuns.permission.common.repository.PermissionGroupCache
 import world.neptuns.permission.common.repository.PermissionGroupRepository
@@ -57,7 +53,7 @@ class PermissionGroupServiceImpl : PermissionGroupService {
         color: TextColor,
         format: PermissionGroupFormat,
         permissions: MutableSet<PermissionInfo>,
-        permissionBundles: MutableSet<PermissionBundle>,
+        permissionBundles: MutableSet<PermissionBundleInfo>,
         parents: MutableSet<String>,
         isDefault: Boolean,
     ) {
@@ -82,6 +78,7 @@ class PermissionGroupServiceImpl : PermissionGroupService {
                 PermissionGroupPermissionBundleInfoEntity.new {
                     this.groupName = name
                     this.name = permissionBundle.name
+                    this.timeoutTimestamp = permissionBundle.timeoutTimestamp
                 }
             }
 
@@ -171,25 +168,50 @@ class PermissionGroupServiceImpl : PermissionGroupService {
                 }
 
                 PermissionGroup.Update.PERMISSION_ADD -> {
-                    val permissionInfo = newValue as PermissionInfoImpl
+                    val permissionInfo = newValue as PermissionInfo
 
                     PermissionGroupPermissionInfoEntity.new {
-                        this.groupName = groupEntity.name
+                        this.groupName = key
                         this.permission = permissionInfo.name
                         this.timeoutTimestamp = permissionInfo.timeoutTimestamp
                     }
                 }
 
                 PermissionGroup.Update.PERMISSION_REMOVE -> {
-                    val permissionInfo = newValue as PermissionInfoImpl
                     PermissionGroupPermissionInfoEntity
-                        .find { PermissionGroupPermissionInfoTable.permission eq permissionInfo.name }
+                        .find { PermissionGroupPermissionInfoTable.permission eq newValue as String }
                         .singleOrNull()
                         ?.delete()
                 }
 
                 PermissionGroup.Update.PERMISSION_CLEAR -> {
-                    PermissionGroupPermissionInfoEntity.find { PermissionGroupPermissionInfoTable.groupName eq key }.forEach(PermissionGroupPermissionInfoEntity::delete)
+                    PermissionGroupPermissionInfoEntity
+                        .find { PermissionGroupPermissionInfoTable.groupName eq key }
+                        .forEach(PermissionGroupPermissionInfoEntity::delete)
+                }
+
+                PermissionGroup.Update.PERMISSION_BUNDLE_ADD -> {
+                    val permissionBundleInfo = newValue as PermissionBundleInfo
+
+                    PermissionGroupPermissionBundleInfoEntity.new {
+                        this.groupName = key
+                        this.name = permissionBundleInfo.name
+                        this.timeoutTimestamp = permissionBundleInfo.timeoutTimestamp
+                    }
+                }
+
+                PermissionGroup.Update.PERMISSION_BUNDLE_REMOVE -> {
+                    PermissionGroupPermissionBundleInfoEntity
+                        .find { (PermissionGroupPermissionBundleInfoTable.groupName eq key) and (PermissionGroupPermissionBundleInfoTable.bundleName eq newValue as String) }
+                        .singleOrNull()
+                        ?.delete()
+                }
+
+                PermissionGroup.Update.PERMISSION_BUNDLE_CLEAR -> {
+                    PermissionGroupPermissionBundleInfoEntity
+                        .find { PermissionGroupPermissionBundleInfoTable.groupName eq key }
+                        .firstOrNull()
+                        ?.delete()
                 }
 
                 PermissionGroup.Update.PARENT_ADD -> {
@@ -207,7 +229,9 @@ class PermissionGroupServiceImpl : PermissionGroupService {
                 }
 
                 PermissionGroup.Update.PARENT_CLEAR -> {
-                    PermissionGroupParentInfoEntity.find { PermissionGroupParentInfoTable.groupName eq key }.forEach(PermissionGroupParentInfoEntity::delete)
+                    PermissionGroupParentInfoEntity
+                        .find { PermissionGroupParentInfoTable.groupName eq key }
+                        .forEach(PermissionGroupParentInfoEntity::delete)
                 }
 
                 PermissionGroup.Update.METADATA_SET -> {
@@ -246,9 +270,15 @@ class PermissionGroupServiceImpl : PermissionGroupService {
 
         when (updateType) {
             PermissionGroup.Update.PRIORITY -> permissionGroup.priority = newValue as Int
+
             PermissionGroup.Update.PERMISSION_ADD -> permissionGroup.permissions.add(newValue as PermissionInfo)
             PermissionGroup.Update.PERMISSION_REMOVE -> permissionGroup.permissions.removeIf { it.name == newValue as String }
             PermissionGroup.Update.PERMISSION_CLEAR -> permissionGroup.permissions.clear()
+
+            PermissionGroup.Update.PERMISSION_BUNDLE_ADD -> permissionGroup.permissionBundles.add(newValue as PermissionBundleInfo)
+            PermissionGroup.Update.PERMISSION_BUNDLE_REMOVE -> permissionGroup.permissionBundles.removeIf { it.name == newValue as String }
+            PermissionGroup.Update.PERMISSION_BUNDLE_CLEAR -> permissionGroup.permissionBundles.clear()
+
             PermissionGroup.Update.PARENT_ADD -> permissionGroup.parents.add(newValue as String)
             PermissionGroup.Update.PARENT_REMOVE -> permissionGroup.parents.remove(newValue as String)
             PermissionGroup.Update.PARENT_CLEAR -> permissionGroup.parents.clear()

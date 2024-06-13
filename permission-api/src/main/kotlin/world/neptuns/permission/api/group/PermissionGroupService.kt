@@ -1,7 +1,7 @@
 package world.neptuns.permission.api.group
 
 import net.kyori.adventure.text.format.TextColor
-import world.neptuns.permission.api.permission.PermissionBundle
+import world.neptuns.permission.api.permission.PermissionBundleInfo
 import world.neptuns.permission.api.permission.PermissionInfo
 import world.neptuns.streamline.api.utils.Updatable
 
@@ -18,7 +18,7 @@ interface PermissionGroupService : Updatable<String, PermissionGroup.Update, Any
         color: TextColor,
         format: PermissionGroupFormat,
         permissions: MutableSet<PermissionInfo>,
-        permissionBundles: MutableSet<PermissionBundle>,
+        permissionBundles: MutableSet<PermissionBundleInfo>,
         parents: MutableSet<String>,
         isDefault: Boolean,
     )

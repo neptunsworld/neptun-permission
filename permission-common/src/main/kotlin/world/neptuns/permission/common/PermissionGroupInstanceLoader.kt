@@ -9,8 +9,8 @@ import world.neptuns.permission.api.NeptunPermissionProvider
 import world.neptuns.permission.api.group.PermissionGroup
 import world.neptuns.permission.api.group.PermissionGroupFormat
 import world.neptuns.permission.api.permission.PermissionBundle
-import world.neptuns.permission.common.api.bundle.PermissionBundleImpl
 import world.neptuns.permission.common.api.group.PermissionGroupImpl
+import world.neptuns.permission.common.api.permission.PermissionBundleImpl
 import world.neptuns.permission.common.api.permission.PermissionInfoImpl
 import world.neptuns.permission.common.database.bundle.dao.PermissionBundleEntity
 import world.neptuns.permission.common.database.group.dao.PermissionGroupEntity
@@ -22,8 +22,8 @@ import world.neptuns.streamline.api.StreamlineApi
 object PermissionGroupInstanceLoader {
 
     suspend fun load() = withContext(Dispatchers.IO) {
-        val permissionBundles: Set<PermissionBundle> = loadPermissionBundles().await()
-        val permissionGroups: Set<PermissionGroup> = loadPermissionGroups(permissionBundles).await()
+        val permissionBundles = loadPermissionBundles().await()
+        val permissionGroups = loadPermissionGroups(permissionBundles).await()
 
         val groupNames = permissionGroups.sortedBy { it.priority }.joinToString(", ") { it.name }
         println("Loaded groups: $groupNames")
@@ -37,8 +37,7 @@ object PermissionGroupInstanceLoader {
                 val permissionBundle = PermissionBundleImpl(
                     permissionBundleEntity.name,
                     permissionBundleEntity.permissions.map { PermissionInfoImpl(it.permission, -1L) }.toMutableSet(),
-                    permissionBundleEntity.isAuthRequired,
-                    permissionBundleEntity.timeoutTimestamp
+                    permissionBundleEntity.isAuthRequired
                 )
 
                 NeptunStreamlineProvider.api.repositoryLoader.get(PermissionBundleRepository::class.java)?.insert(permissionBundle.name, permissionBundle)
@@ -63,7 +62,7 @@ object PermissionGroupInstanceLoader {
                         TextColor.fromHexString(permissionGroupEntity.color)!!,
                         StreamlineApi.GSON.fromJson(permissionGroupEntity.format, PermissionGroupFormat::class.java),
                         permissionGroupEntity.permissions.map { PermissionInfoImpl(it.permission, it.timeoutTimestamp) }.toMutableSet(),
-                        permissionGroupEntity.permissionBundles.map { bundle -> permissionBundles.find { it.name == bundle.name }!! }.toMutableSet(),
+                        permissionGroupEntity.permissionBundles.map { bundleInfo -> permissionBundles.find { it.name == bundleInfo.name }!!.toBundleInfo(bundleInfo.timeoutTimestamp) }.toMutableSet(),
                         permissionGroupEntity.parents.map { it.parentName }.toMutableSet(),
                         permissionGroupEntity.metadata.associate { Pair(it.key, it.value) }.toMutableMap(),
                         permissionGroupEntity.isDefault

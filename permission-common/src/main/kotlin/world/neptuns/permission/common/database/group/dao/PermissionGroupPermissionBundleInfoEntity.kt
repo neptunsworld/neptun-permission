@@ -10,4 +10,5 @@ class PermissionGroupPermissionBundleInfoEntity(id: EntityID<Int>): IntEntity(id
 
     var groupName by PermissionGroupPermissionBundleInfoTable.groupName
     var name by PermissionGroupPermissionBundleInfoTable.bundleName
+    var timeoutTimestamp by PermissionGroupPermissionBundleInfoTable.timeoutTimestamp
 }

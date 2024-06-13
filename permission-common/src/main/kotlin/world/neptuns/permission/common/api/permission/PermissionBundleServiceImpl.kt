@@ -1,4 +1,4 @@
-package world.neptuns.permission.common.api.bundle
+package world.neptuns.permission.common.api.permission
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -44,7 +44,6 @@ class PermissionBundleServiceImpl : PermissionBundleService {
             PermissionBundleEntity.new {
                 this.name = name
                 this.isAuthRequired = isAuthRequired
-                this.timeoutTimestamp = timeoutTimestamp
             }
         }
 
@@ -52,7 +51,6 @@ class PermissionBundleServiceImpl : PermissionBundleService {
             name,
             mutableSetOf(),
             isAuthRequired,
-            timeoutTimestamp
         )
 
         cachePermissionBundle(name, permissionBundle)
