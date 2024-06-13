@@ -1,28 +1,26 @@
 package world.neptuns.permission.common.api.group
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.kyori.adventure.text.format.TextColor
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
-import world.neptuns.core.base.api.CoreBaseApi
-import world.neptuns.permission.api.NeptunPermissionProvider
 import world.neptuns.permission.api.group.PermissionGroup
 import world.neptuns.permission.api.group.PermissionGroupFormat
 import world.neptuns.permission.api.group.PermissionGroupService
 import world.neptuns.permission.api.permission.PermissionBundle
 import world.neptuns.permission.api.permission.PermissionInfo
 import world.neptuns.permission.common.api.permission.PermissionInfoImpl
+import world.neptuns.permission.common.database.group.PermissionGroupMetadataTable
 import world.neptuns.permission.common.database.group.PermissionGroupParentInfoTable
 import world.neptuns.permission.common.database.group.PermissionGroupPermissionInfoTable
 import world.neptuns.permission.common.database.group.PermissionGroupTable
-import world.neptuns.permission.common.database.group.dao.PermissionGroupBundleInfoEntity
-import world.neptuns.permission.common.database.group.dao.PermissionGroupEntity
-import world.neptuns.permission.common.database.group.dao.PermissionGroupParentInfoEntity
-import world.neptuns.permission.common.database.group.dao.PermissionGroupPermissionInfoEntity
+import world.neptuns.permission.common.database.group.dao.*
 import world.neptuns.permission.common.repository.PermissionGroupCache
 import world.neptuns.permission.common.repository.PermissionGroupRepository
 import world.neptuns.streamline.api.NeptunStreamlineProvider
+import world.neptuns.streamline.api.StreamlineApi
 
 @Suppress("OPT_IN_USAGE")
 class PermissionGroupServiceImpl : PermissionGroupService {
@@ -68,7 +66,7 @@ class PermissionGroupServiceImpl : PermissionGroupService {
                 this.name = name
                 this.priority = priority
                 this.color = color.asHexString()
-                this.format = CoreBaseApi.GSON.toJson(format)
+                this.format = StreamlineApi.GSON.toJson(format)
                 this.isDefault = isDefault
             }
 
@@ -81,7 +79,7 @@ class PermissionGroupServiceImpl : PermissionGroupService {
             }
 
             permissionBundles.forEach { permissionBundle ->
-                PermissionGroupBundleInfoEntity.new {
+                PermissionGroupPermissionBundleInfoEntity.new {
                     this.groupName = name
                     this.name = permissionBundle.name
                 }
@@ -109,46 +107,42 @@ class PermissionGroupServiceImpl : PermissionGroupService {
         )
 
         cachePermissionGroup(name, permissionGroup)
-        permissionGroupRepository.insert(name, permissionGroup)
+        this.permissionGroupRepository.insert(name, permissionGroup)
     }
 
     override suspend fun deletePermissionGroup(name: String) {
         newSuspendedTransaction {
-            val groupEntity = PermissionGroupEntity
-                .find { PermissionGroupTable.name eq name }
-                .singleOrNull() ?: return@newSuspendedTransaction
-
-            groupEntity.delete()
+            PermissionGroupEntity.find { PermissionGroupTable.name eq name }.singleOrNull()?.delete()
             unloadPermissionGroup(name)
         }
     }
 
-    override suspend fun loadPermissionGroup(name: String): Deferred<PermissionGroup?> = withContext(Dispatchers.IO) {
-        suspendedTransactionAsync {
-            val existingPermissionGroupEntity = PermissionGroupEntity.find { PermissionGroupTable.name eq name }.firstOrNull()
-
-            if (existingPermissionGroupEntity == null) {
-                null
-            } else {
-                val permissionGroup = PermissionGroupImpl(
-                    name,
-                    existingPermissionGroupEntity.priority,
-                    TextColor.fromHexString(existingPermissionGroupEntity.color)!!,
-                    CoreBaseApi.GSON.fromJson(existingPermissionGroupEntity.format, PermissionGroupFormat::class.java),
-                    existingPermissionGroupEntity.permissions.map { PermissionInfoImpl(it.permission, it.timeoutTimestamp) }.toMutableSet(),
-                    existingPermissionGroupEntity.permissionBundles.map { bundle -> NeptunPermissionProvider.api.permissionBundleService.getPermissionBundle(bundle.name)!! }.toMutableSet(),
-                    existingPermissionGroupEntity.parents.map { it.parentName }.toMutableSet(),
-                    mutableMapOf(),
-                    existingPermissionGroupEntity.isDefault
-                )
-
-                cachePermissionGroup(name, permissionGroup)
-                permissionGroupRepository.insert(name, permissionGroup)
-
-                permissionGroup
-            }
-        }
-    }
+//    override suspend fun loadPermissionGroup(name: String): Deferred<PermissionGroup?> = withContext(Dispatchers.IO) {
+//        suspendedTransactionAsync {
+//            val existingPermissionGroupEntity = PermissionGroupEntity.find { PermissionGroupTable.name eq name }.firstOrNull()
+//
+//            if (existingPermissionGroupEntity == null) {
+//                null
+//            } else {
+//                val permissionGroup = PermissionGroupImpl(
+//                    name,
+//                    existingPermissionGroupEntity.priority,
+//                    TextColor.fromHexString(existingPermissionGroupEntity.color)!!,
+//                    StreamlineApi.GSON.fromJson(existingPermissionGroupEntity.format, PermissionGroupFormat::class.java),
+//                    existingPermissionGroupEntity.permissions.map { PermissionInfoImpl(it.permission, it.timeoutTimestamp) }.toMutableSet(),
+//                    existingPermissionGroupEntity.permissionBundles.map { bundle -> NeptunPermissionProvider.api.permissionBundleService.getPermissionBundle(bundle.name)!! }.toMutableSet(),
+//                    existingPermissionGroupEntity.parents.map { it.parentName }.toMutableSet(),
+//                    existingPermissionGroupEntity.metadata.associate { Pair(it.key, it.value) }.toMutableMap(),
+//                    existingPermissionGroupEntity.isDefault
+//                )
+//
+//                cachePermissionGroup(name, permissionGroup)
+//                permissionGroupRepository.insert(name, permissionGroup)
+//
+//                permissionGroup
+//            }
+//        }
+//    }
 
     override suspend fun unloadPermissionGroup(name: String) {
         this.permissionGroupRepository.delete(name)
@@ -163,6 +157,7 @@ class PermissionGroupServiceImpl : PermissionGroupService {
         this.permissionGroupCache.delete(name)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override suspend fun bulkUpdateEntry(updateType: PermissionGroup.Update, key: String, newValue: Any, updateCache: Boolean, result: (Unit) -> Unit) {
         newSuspendedTransaction {
             val groupEntity = PermissionGroupEntity
@@ -215,18 +210,37 @@ class PermissionGroupServiceImpl : PermissionGroupService {
                     PermissionGroupParentInfoEntity.find { PermissionGroupParentInfoTable.groupName eq key }.forEach(PermissionGroupParentInfoEntity::delete)
                 }
 
+                PermissionGroup.Update.METADATA_SET -> {
+                    val pair = newValue as Pair<String, Any>
+                    PermissionGroupMetadataEntity.new {
+                        this.groupName = key
+                        this.key = pair.first
+                        this.value = StreamlineApi.GSON.toJson(pair.second)
+                    }
+                }
+
+                PermissionGroup.Update.METADATA_REMOVE -> {
+                    PermissionGroupMetadataEntity
+                        .find { (PermissionGroupMetadataTable.groupName eq key) and (PermissionGroupMetadataTable.key eq newValue as String) }
+                        .singleOrNull()
+                        ?.delete()
+                }
+
+                PermissionGroup.Update.METADATA_CLEAR -> {
+                    PermissionGroupMetadataEntity.find { PermissionGroupMetadataTable.groupName eq key }.forEach(PermissionGroupMetadataEntity::delete)
+                }
+
                 PermissionGroup.Update.IS_DEFAULT -> {
                     groupEntity.apply { this.isDefault = newValue as Boolean }
                     commit()
                 }
-
-                PermissionGroup.Update.METADATA -> TODO()
             }
         }
 
         if (updateCache) updateCachedEntry(updateType, key, newValue, result)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override suspend fun updateCachedEntry(updateType: PermissionGroup.Update, key: String, newValue: Any, result: (Unit) -> Unit) {
         val permissionGroup = getPermissionGroup(key) ?: return
 
@@ -238,7 +252,14 @@ class PermissionGroupServiceImpl : PermissionGroupService {
             PermissionGroup.Update.PARENT_ADD -> permissionGroup.parents.add(newValue as String)
             PermissionGroup.Update.PARENT_REMOVE -> permissionGroup.parents.remove(newValue as String)
             PermissionGroup.Update.PARENT_CLEAR -> permissionGroup.parents.clear()
-            PermissionGroup.Update.METADATA -> TODO()
+
+            PermissionGroup.Update.METADATA_SET -> {
+                val pair = newValue as Pair<String, Any>
+                permissionGroup.metadata[pair.first] = pair.second
+            }
+
+            PermissionGroup.Update.METADATA_REMOVE -> permissionGroup.metadata.remove(newValue as String)
+            PermissionGroup.Update.METADATA_CLEAR -> permissionGroup.metadata.clear()
             PermissionGroup.Update.IS_DEFAULT -> permissionGroup.isDefault = newValue as Boolean
         }
 

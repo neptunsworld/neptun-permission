@@ -3,10 +3,7 @@ package world.neptuns.permission.common.database.group.dao
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import world.neptuns.permission.common.database.group.PermissionGroupBundleInfoTable
-import world.neptuns.permission.common.database.group.PermissionGroupParentInfoTable
-import world.neptuns.permission.common.database.group.PermissionGroupPermissionInfoTable
-import world.neptuns.permission.common.database.group.PermissionGroupTable
+import world.neptuns.permission.common.database.group.*
 
 class PermissionGroupEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<PermissionGroupEntity>(PermissionGroupTable)
@@ -18,7 +15,8 @@ class PermissionGroupEntity(id: EntityID<Int>) : IntEntity(id) {
     var isDefault by PermissionGroupTable.isDefault
 
     val permissions by PermissionGroupPermissionInfoEntity referrersOn PermissionGroupPermissionInfoTable.groupName
-    val permissionBundles by PermissionGroupBundleInfoEntity referrersOn PermissionGroupBundleInfoTable.groupName
+    val permissionBundles by PermissionGroupPermissionBundleInfoEntity referrersOn PermissionGroupPermissionBundleInfoTable.groupName
     val parents by PermissionGroupParentInfoEntity referrersOn PermissionGroupParentInfoTable.groupName
+    val metadata by PermissionGroupMetadataEntity referrersOn PermissionGroupMetadataTable.groupName
 
 }

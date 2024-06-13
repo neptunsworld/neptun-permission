@@ -11,8 +11,8 @@ interface PermissionApi {
 
     companion object {
         val defaultGroupFormat = PermissionGroupFormat(
-            "<groupcolor>[<groupname>] <gray><name>: <white>",
-            "<groupcolor>[<groupname>] <gray>",
+            "<groupcolor><bold><groupname></bold> <gray><name>: <white>",
+            "<groupcolor><bold><groupname></bold> <gray>",
             "<groupname>"
         )
     }

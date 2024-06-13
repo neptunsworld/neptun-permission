@@ -9,9 +9,7 @@ import world.neptuns.permission.common.api.bundle.PermissionBundleServiceImpl
 import world.neptuns.permission.common.api.group.PermissionGroupServiceImpl
 import world.neptuns.permission.common.database.bundle.PermissionBundlePermissionInfoTable
 import world.neptuns.permission.common.database.bundle.PermissionBundleTable
-import world.neptuns.permission.common.database.group.PermissionGroupParentInfoTable
-import world.neptuns.permission.common.database.group.PermissionGroupPermissionInfoTable
-import world.neptuns.permission.common.database.group.PermissionGroupTable
+import world.neptuns.permission.common.database.group.*
 import world.neptuns.permission.common.database.player.PermissionPlayerGroupInfoTable
 import world.neptuns.permission.common.database.player.PermissionPlayerPrivatePermissionInfoTable
 import world.neptuns.permission.common.database.player.PermissionPlayerTable
@@ -44,8 +42,10 @@ class PermissionApiImpl : PermissionApi {
                 PermissionBundlePermissionInfoTable,
                 // Permission Groups
                 PermissionGroupTable,
-                PermissionGroupParentInfoTable,
                 PermissionGroupPermissionInfoTable,
+                PermissionGroupPermissionBundleInfoTable,
+                PermissionGroupParentInfoTable,
+                PermissionGroupMetadataTable,
                 // Permission Players
                 PermissionPlayerTable,
                 PermissionPlayerGroupInfoTable,

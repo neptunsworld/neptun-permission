@@ -1,6 +1,5 @@
 package world.neptuns.permission.api.group
 
-import kotlinx.coroutines.Deferred
 import net.kyori.adventure.text.format.TextColor
 import world.neptuns.permission.api.permission.PermissionBundle
 import world.neptuns.permission.api.permission.PermissionInfo
@@ -25,8 +24,6 @@ interface PermissionGroupService : Updatable<String, PermissionGroup.Update, Any
     )
 
     suspend fun deletePermissionGroup(name: String)
-
-    suspend fun loadPermissionGroup(name: String): Deferred<PermissionGroup?>
 
     suspend fun unloadPermissionGroup(name: String)
 

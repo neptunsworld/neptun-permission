@@ -6,8 +6,8 @@ import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.format.TextColor
 import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import world.neptuns.permission.api.NeptunPermissionProvider
-import world.neptuns.permission.api.PermissionApi
 import world.neptuns.permission.api.group.PermissionGroup
+import world.neptuns.permission.api.group.PermissionGroupFormat
 import world.neptuns.permission.api.permission.PermissionBundle
 import world.neptuns.permission.common.api.bundle.PermissionBundleImpl
 import world.neptuns.permission.common.api.group.PermissionGroupImpl
@@ -17,15 +17,16 @@ import world.neptuns.permission.common.database.group.dao.PermissionGroupEntity
 import world.neptuns.permission.common.repository.PermissionBundleRepository
 import world.neptuns.permission.common.repository.PermissionGroupRepository
 import world.neptuns.streamline.api.NeptunStreamlineProvider
+import world.neptuns.streamline.api.StreamlineApi
 
 object PermissionGroupInstanceLoader {
 
     suspend fun load() = withContext(Dispatchers.IO) {
         val permissionBundles: Set<PermissionBundle> = loadPermissionBundles().await()
-        //TODO: impl metadata
         val permissionGroups: Set<PermissionGroup> = loadPermissionGroups(permissionBundles).await()
 
-        println("Loaded ${permissionGroups.size} permission groups...")
+        val groupNames = permissionGroups.sortedBy { it.priority }.joinToString(", ") { it.name }
+        println("Loaded groups: $groupNames")
     }
 
     private suspend fun loadPermissionBundles(): Deferred<Set<PermissionBundle>> = withContext(Dispatchers.IO) {
@@ -60,11 +61,11 @@ object PermissionGroupInstanceLoader {
                         permissionGroupEntity.name,
                         permissionGroupEntity.priority,
                         TextColor.fromHexString(permissionGroupEntity.color)!!,
-                        PermissionApi.defaultGroupFormat,
+                        StreamlineApi.GSON.fromJson(permissionGroupEntity.format, PermissionGroupFormat::class.java),
                         permissionGroupEntity.permissions.map { PermissionInfoImpl(it.permission, it.timeoutTimestamp) }.toMutableSet(),
                         permissionGroupEntity.permissionBundles.map { bundle -> permissionBundles.find { it.name == bundle.name }!! }.toMutableSet(),
                         permissionGroupEntity.parents.map { it.parentName }.toMutableSet(),
-                        mutableMapOf(),
+                        permissionGroupEntity.metadata.associate { Pair(it.key, it.value) }.toMutableMap(),
                         permissionGroupEntity.isDefault
                     )
 

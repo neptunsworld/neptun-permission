@@ -3,6 +3,7 @@ package world.neptuns.permission.api.group
 import net.kyori.adventure.text.format.TextColor
 import world.neptuns.permission.api.permission.PermissionBundle
 import world.neptuns.permission.api.permission.PermissionInfo
+import world.neptuns.streamline.api.StreamlineApi
 import java.io.Serializable
 
 interface PermissionGroup : Serializable {
@@ -25,6 +26,8 @@ interface PermissionGroup : Serializable {
     fun clearExpiredPermissions()
     fun hasPermission(permission: String): Boolean
 
+    fun <T> getMetadataValue(key: String, clazz: Class<T>): T? = StreamlineApi.GSON.fromJson(this.metadata[key].toString(), clazz)
+
     enum class Update {
         PRIORITY,
 
@@ -36,7 +39,10 @@ interface PermissionGroup : Serializable {
         PARENT_REMOVE,
         PARENT_CLEAR,
 
-        METADATA,
+        METADATA_SET,
+        METADATA_REMOVE,
+        METADATA_CLEAR,
+
         IS_DEFAULT;
     }
 

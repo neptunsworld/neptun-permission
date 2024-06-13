@@ -7,11 +7,11 @@ interface PermissionBundle : Expirable, Serializable {
     val name: String
 
     val permissions: MutableSet<PermissionInfo>
-    val isAuthRequired: Boolean
+    var isAuthRequired: Boolean
 
     enum class Update {
-        ALL,
-        PERMISSIONS,
+        PERMISSION_ADD,
+        PERMISSION_REMOVE,
         IS_AUTH_REQUIRED;
     }
 
