@@ -3,9 +3,9 @@ package world.neptuns.permission.common
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import net.kyori.adventure.text.format.TextColor
 import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import world.neptuns.permission.api.NeptunPermissionProvider
+import world.neptuns.permission.api.PermissionApi
 import world.neptuns.permission.api.group.PermissionGroup
 import world.neptuns.permission.api.group.PermissionGroupFormat
 import world.neptuns.permission.api.permission.PermissionBundle
@@ -36,7 +36,7 @@ object PermissionGroupInstanceLoader {
             for (permissionBundleEntity in PermissionBundleEntity.all()) {
                 val permissionBundle = PermissionBundleImpl(
                     permissionBundleEntity.name,
-                    permissionBundleEntity.permissions.map { PermissionInfoImpl(it.permission, -1L) }.toMutableSet(),
+                    permissionBundleEntity.permissions.map { PermissionInfoImpl(it.permission, PermissionApi.PERMANENT_DURATION) }.toMutableSet(),
                     permissionBundleEntity.isAuthRequired
                 )
 
@@ -59,7 +59,7 @@ object PermissionGroupInstanceLoader {
                     val permissionGroup = PermissionGroupImpl(
                         permissionGroupEntity.name,
                         permissionGroupEntity.priority,
-                        TextColor.fromHexString(permissionGroupEntity.color)!!,
+                        permissionGroupEntity.color,
                         StreamlineApi.GSON.fromJson(permissionGroupEntity.format, PermissionGroupFormat::class.java),
                         permissionGroupEntity.permissions.map { PermissionInfoImpl(it.permission, it.timeoutTimestamp) }.toMutableSet(),
                         permissionGroupEntity.permissionBundles.map { bundleInfo -> permissionBundles.find { it.name == bundleInfo.name }!!.toBundleInfo(bundleInfo.timeoutTimestamp) }.toMutableSet(),

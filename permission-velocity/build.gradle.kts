@@ -9,6 +9,7 @@ plugins {
 }
 
 dependencies {
+    compileOnly(libs.neptun.core.base.api)
     compileOnly(libs.bundles.velocity)
     kapt(libs.velocity.api)
 

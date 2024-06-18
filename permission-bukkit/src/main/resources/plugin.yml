@@ -1,0 +1,7 @@
+name: neptun_permissions
+version: 1.0
+api-version: "1.20"
+main: world.neptuns.permission.bukkit.NeptunBukkitPlugin
+author: TGamings
+depend:
+  - neptun_core_base

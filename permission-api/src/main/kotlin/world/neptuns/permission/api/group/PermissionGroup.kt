@@ -1,6 +1,5 @@
 package world.neptuns.permission.api.group
 
-import net.kyori.adventure.text.format.TextColor
 import world.neptuns.permission.api.permission.PermissionBundleInfo
 import world.neptuns.permission.api.permission.PermissionInfo
 import world.neptuns.streamline.api.StreamlineApi
@@ -11,20 +10,20 @@ interface PermissionGroup : Serializable {
     val name: String
     var priority: Int
 
-    val color: TextColor
+    val hexColorCode: String
     val format: PermissionGroupFormat
 
-    var permissions: MutableSet<PermissionInfo>
-    var permissionBundles: MutableSet<PermissionBundleInfo>
+    val permissions: MutableSet<PermissionInfo>
+    val permissionBundles: MutableSet<PermissionBundleInfo>
 
-    var parents: MutableSet<String>
-    var metadata: MutableMap<String, Any>
+    val parents: MutableSet<String>
+    val metadata: MutableMap<String, Any>
 
     var isDefault: Boolean
 
     fun collectAllPermissions(): Set<PermissionInfo>
-    fun clearExpiredPermissions()
-    fun hasPermission(permission: String): Boolean
+    suspend fun clearExpiredPermissions()
+    suspend fun hasPermission(permission: String): Boolean
 
     fun <T> getMetadataValue(key: String, clazz: Class<T>): T? = StreamlineApi.GSON.fromJson(this.metadata[key].toString(), clazz)
 

@@ -16,10 +16,11 @@ interface PermissionPlayer : Serializable {
 
     var authSession: AuthSession?
 
-    fun clearExpiredPrivatePermissions()
+    suspend fun collectAllPermissions(): Set<PermissionInfo>
+    suspend fun clearExpiredPrivatePermissions()
     fun hasPermission(permission: String): Boolean
 
-    fun onActiveGroupExpire()
+    suspend fun onActiveGroupExpire()
 
     enum class Update {
         PERMISSION_GROUP_ADD,

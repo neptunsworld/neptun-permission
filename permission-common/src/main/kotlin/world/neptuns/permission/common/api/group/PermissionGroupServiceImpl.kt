@@ -94,7 +94,7 @@ class PermissionGroupServiceImpl : PermissionGroupService {
         val permissionGroup = PermissionGroupImpl(
             name,
             priority,
-            color,
+            color.asHexString(),
             format,
             permissions,
             permissionBundles,

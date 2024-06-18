@@ -8,6 +8,8 @@ plugins {
 }
 
 dependencies {
+    compileOnly(libs.neptun.core.base.api)
+    compileOnly(libs.neptun.core.bukkit.api)
     compileOnly(libs.bundles.paper)
     compileOnly(project(":permission-api"))
     implementation(project(":permission-common"))

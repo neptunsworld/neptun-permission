@@ -7,16 +7,19 @@ import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionA
 import world.neptuns.permission.api.NeptunPermissionProvider
 import world.neptuns.permission.api.PermissionApi
 import world.neptuns.permission.api.group.PermissionGroupInfo
+import world.neptuns.permission.api.permission.PermissionBundleInfo
 import world.neptuns.permission.api.permission.PermissionInfo
 import world.neptuns.permission.api.player.AuthSession
 import world.neptuns.permission.api.player.PermissionPlayer
 import world.neptuns.permission.api.player.PermissionPlayerService
 import world.neptuns.permission.common.api.permission.PermissionInfoImpl
 import world.neptuns.permission.common.database.player.PermissionPlayerGroupInfoTable
+import world.neptuns.permission.common.database.player.PermissionPlayerPrivatePermissionBundleInfoTable
 import world.neptuns.permission.common.database.player.PermissionPlayerPrivatePermissionInfoTable
 import world.neptuns.permission.common.database.player.PermissionPlayerTable
 import world.neptuns.permission.common.database.player.dao.PermissionPlayerEntity
 import world.neptuns.permission.common.database.player.dao.PermissionPlayerGroupInfoEntity
+import world.neptuns.permission.common.database.player.dao.PermissionPlayerPrivatePermissionBundleInfoEntity
 import world.neptuns.permission.common.database.player.dao.PermissionPlayerPrivatePermissionInfoEntity
 import world.neptuns.permission.common.repository.PermissionPlayerCache
 import world.neptuns.permission.common.repository.PermissionPlayerRepository
@@ -46,15 +49,24 @@ class PermissionPlayerServiceImpl : PermissionPlayerService {
         val defaultGroup = NeptunPermissionProvider.api.permissionGroupService.getDefaultGroup()
             ?: throw NullPointerException("No default group found... Cannot create PermissionPlayer!")
 
+        val defaultGroupInfo = defaultGroup.toGroupInfo(PermissionApi.PERMANENT_DURATION)
+
         newSuspendedTransaction {
-            PermissionPlayerEntity.new(uuid) {
+            PermissionPlayerEntity.new {
+                this.uuid = uuid
                 this.authSession = null
+            }
+
+            PermissionPlayerGroupInfoEntity.new {
+                this.uuid = uuid
+                this.groupName = defaultGroupInfo.name
+                this.timeoutTimestamp = defaultGroupInfo.timeoutTimestamp
             }
         }
 
         val permissionPlayer = PermissionPlayerImpl(
             uuid,
-            mutableSetOf(defaultGroup.toGroupInfo(PermissionApi.PERMANENT_DURATION)),
+            mutableSetOf(defaultGroupInfo),
             mutableSetOf(),
             mutableSetOf(),
             null
@@ -66,14 +78,14 @@ class PermissionPlayerServiceImpl : PermissionPlayerService {
 
     override suspend fun deletePermissionPlayer(uuid: UUID) {
         newSuspendedTransaction {
-            PermissionPlayerEntity.find { PermissionPlayerTable.id eq uuid }.singleOrNull()?.delete()
+            PermissionPlayerEntity.find { PermissionPlayerTable.uuid eq uuid }.singleOrNull()?.delete()
             unloadPermissionPlayer(uuid)
         }
     }
 
     override suspend fun loadPermissionPlayer(uuid: UUID): Deferred<PermissionPlayer?> = withContext(Dispatchers.IO) {
         suspendedTransactionAsync {
-            val existingPermissionPlayer = PermissionPlayerEntity.find { PermissionPlayerTable.id eq uuid }.firstOrNull()
+            val existingPermissionPlayer = PermissionPlayerEntity.find { PermissionPlayerTable.uuid eq uuid }.firstOrNull()
 
             if (existingPermissionPlayer == null) {
                 null
@@ -81,7 +93,7 @@ class PermissionPlayerServiceImpl : PermissionPlayerService {
                 val permissionPlayer = PermissionPlayerImpl(
                     uuid,
                     existingPermissionPlayer.groups.map { group -> NeptunPermissionProvider.api.permissionGroupService.getPermissionGroup(group.groupName)!!.toGroupInfo(group.timeoutTimestamp) }.toMutableSet(),
-                    existingPermissionPlayer.privatePermissionBundles.map { bundleInfo -> NeptunPermissionProvider.api.permissionBundleService.getPermissionBundle(bundleInfo.bundleName)!!.toBundleInfo(bundleInfo.timeoutTimestamp) }.toMutableSet(),
+                    existingPermissionPlayer.privatePermissionBundles.map { bundleInfo -> NeptunPermissionProvider.api.permissionBundleService.getPermissionBundle(bundleInfo.name)!!.toBundleInfo(bundleInfo.timeoutTimestamp) }.toMutableSet(),
                     existingPermissionPlayer.privatePermissions.map { PermissionInfoImpl(it.permission, it.timeoutTimestamp) }.toMutableSet(),
                     if (existingPermissionPlayer.authSession == null) null else AuthSessionImpl(existingPermissionPlayer.authSession!!)
                 )
@@ -127,9 +139,29 @@ class PermissionPlayerServiceImpl : PermissionPlayerService {
                         ?.delete()
                 }
 
-                PermissionPlayer.Update.PERMISSION_BUNDLE_ADD -> TODO()
-                PermissionPlayer.Update.PERMISSION_BUNDLE_REMOVE -> TODO()
-                PermissionPlayer.Update.PERMISSION_BUNDLE_CLEAR -> TODO()
+                PermissionPlayer.Update.PERMISSION_BUNDLE_ADD -> {
+                    val permissionBundleInfo = newValue as PermissionBundleInfo
+
+                    PermissionPlayerPrivatePermissionBundleInfoEntity.new {
+                        this.uuid = key
+                        this.name = permissionBundleInfo.name
+                        this.timeoutTimestamp = permissionBundleInfo.timeoutTimestamp
+                    }
+                }
+
+                PermissionPlayer.Update.PERMISSION_BUNDLE_REMOVE -> {
+                    PermissionPlayerPrivatePermissionBundleInfoEntity
+                        .find { (PermissionPlayerPrivatePermissionBundleInfoTable.uuid eq key) and (PermissionPlayerPrivatePermissionBundleInfoTable.bundleName eq newValue as String) }
+                        .singleOrNull()
+                        ?.delete()
+                }
+
+                PermissionPlayer.Update.PERMISSION_BUNDLE_CLEAR -> {
+                    PermissionPlayerPrivatePermissionBundleInfoEntity
+                        .find { PermissionPlayerPrivatePermissionBundleInfoTable.uuid eq key }
+                        .firstOrNull()
+                        ?.delete()
+                }
 
                 PermissionPlayer.Update.PRIVATE_PERMISSION_ADD -> {
                     val permissionInfo = newValue as PermissionInfo
@@ -158,7 +190,7 @@ class PermissionPlayerServiceImpl : PermissionPlayerService {
                     val authSession = newValue as AuthSession?
 
                     PermissionPlayerEntity
-                        .find { PermissionPlayerTable.id eq key }
+                        .find { PermissionPlayerTable.uuid eq key }
                         .singleOrNull()
                         ?.apply {
                             this.authSession = authSession.toString()
@@ -179,9 +211,9 @@ class PermissionPlayerServiceImpl : PermissionPlayerService {
             PermissionPlayer.Update.PERMISSION_GROUP_ADD -> permissionPlayer.groups.add(newValue as PermissionGroupInfo)
             PermissionPlayer.Update.PERMISSION_GROUP_REMOVE -> permissionPlayer.groups.removeIf { it.name == newValue as String }
 
-            PermissionPlayer.Update.PERMISSION_BUNDLE_ADD -> TODO()
-            PermissionPlayer.Update.PERMISSION_BUNDLE_REMOVE -> TODO()
-            PermissionPlayer.Update.PERMISSION_BUNDLE_CLEAR -> TODO()
+            PermissionPlayer.Update.PERMISSION_BUNDLE_ADD -> permissionPlayer.privatePermissionBundles.add(newValue as PermissionBundleInfo)
+            PermissionPlayer.Update.PERMISSION_BUNDLE_REMOVE -> permissionPlayer.privatePermissionBundles.removeIf { it.name == newValue as String }
+            PermissionPlayer.Update.PERMISSION_BUNDLE_CLEAR -> permissionPlayer.privatePermissionBundles.clear()
 
             PermissionPlayer.Update.PRIVATE_PERMISSION_ADD -> permissionPlayer.privatePermissions.add(newValue as PermissionInfo)
             PermissionPlayer.Update.PRIVATE_PERMISSION_REMOVE -> permissionPlayer.privatePermissions.removeIf { it.name == newValue as String }

@@ -13,6 +13,8 @@
 .idea/**/shelf
 *.idea
 
+htmlReport
+
 # Kubernetes cluster config
 **/config
 

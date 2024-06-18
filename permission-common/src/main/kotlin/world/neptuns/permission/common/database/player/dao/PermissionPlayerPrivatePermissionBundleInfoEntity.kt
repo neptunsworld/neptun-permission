@@ -9,6 +9,6 @@ class PermissionPlayerPrivatePermissionBundleInfoEntity(id: EntityID<Int>) : Int
     companion object : IntEntityClass<PermissionPlayerPrivatePermissionBundleInfoEntity>(PermissionPlayerPrivatePermissionBundleInfoTable)
 
     var uuid by PermissionPlayerPrivatePermissionBundleInfoTable.uuid
-    var bundleName by PermissionPlayerPrivatePermissionBundleInfoTable.bundleName
+    var name by PermissionPlayerPrivatePermissionBundleInfoTable.bundleName
     var timeoutTimestamp by PermissionPlayerPrivatePermissionBundleInfoTable.timeoutTimestamp
 }

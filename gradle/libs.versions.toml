@@ -49,6 +49,7 @@ kyori-adventure-api = { group = "net.kyori", name = "adventure-api", version.ref
 kyori-minimessage-api = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "kyori-adventure-api" }
 
 neptun-core-base-api = { group = "world.neptuns.core.base", name = "base-api", version.ref = "neptun-core-base-api" }
+neptun-core-bukkit-api = { group = "world.neptuns.core.base", name = "base-bukkit-api", version.ref = "neptun-core-base-api" }
 
 [bundles]
 database = ["redisson", "mariadb", "sql-core", "sql-dao", "sql-jdbc"]

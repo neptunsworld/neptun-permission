@@ -81,9 +81,10 @@ class PermissionBundleServiceImpl : PermissionBundleService {
         newSuspendedTransaction {
             when (updateType) {
                 PermissionBundle.Update.PERMISSION_ADD -> {
+                    val permissionInfo = newValue as PermissionInfo
                     PermissionBundlePermissionInfoEntity.new {
                         this.bundleName = key
-                        this.permission = newValue as String
+                        this.permission = permissionInfo.name
                     }
                 }
 
