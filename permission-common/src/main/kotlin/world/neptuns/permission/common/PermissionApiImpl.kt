@@ -22,10 +22,8 @@ import world.neptuns.permission.common.database.player.PermissionPlayerGroupInfo
 import world.neptuns.permission.common.database.player.PermissionPlayerPrivatePermissionBundleInfoTable
 import world.neptuns.permission.common.database.player.PermissionPlayerPrivatePermissionInfoTable
 import world.neptuns.permission.common.database.player.PermissionPlayerTable
-import world.neptuns.permission.common.packet.PlayerUpdatePermissionsPacket
 import world.neptuns.permission.common.repository.*
 import world.neptuns.streamline.api.NeptunStreamlineProvider
-import java.util.*
 
 class PermissionApiImpl : PermissionApi {
 
@@ -78,10 +76,6 @@ class PermissionApiImpl : PermissionApi {
 
         this.permissionPlayerService = PermissionPlayerServiceImpl()
         this.permissionPlayerAdapter = PermissionPlayerAdapterImpl()
-    }
-
-    override suspend fun sendPlayerPermissionChange(uuid: UUID) {
-        NeptunStreamlineProvider.api.packetController.sendPacket(PlayerUpdatePermissionsPacket(uuid))
     }
 
     suspend fun loadContents() = PermissionGroupInstanceLoader.load()

@@ -14,6 +14,8 @@ class PermissionBundleAdapterImpl : PermissionBundleAdapter {
             newValue = permission,
             updateCache = true
         )
+
+        NeptunPermissionProvider.api.permissionPlayerAdapter.sendPermissionUpdateToPlayersWithBundle(bundleName)
     }
 
     override suspend fun removePermission(bundleName: String, permission: String) {
@@ -23,6 +25,8 @@ class PermissionBundleAdapterImpl : PermissionBundleAdapter {
             newValue = permission,
             updateCache = true
         )
+
+        NeptunPermissionProvider.api.permissionPlayerAdapter.sendPermissionUpdateToPlayersWithBundle(bundleName)
     }
 
 }

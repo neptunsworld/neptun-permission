@@ -1,5 +1,6 @@
 package world.neptuns.permission.api.player
 
+import kotlinx.coroutines.Deferred
 import world.neptuns.permission.api.group.PermissionGroup
 import world.neptuns.permission.api.group.PermissionGroupInfo
 import world.neptuns.permission.api.permission.PermissionBundleInfo
@@ -7,6 +8,12 @@ import world.neptuns.permission.api.permission.PermissionInfo
 import java.util.*
 
 interface PermissionPlayerAdapter {
+
+    suspend fun getPermissionPlayersWithBundle(name: String): Deferred<List<PermissionPlayer>>
+    suspend fun getPermissionPlayersWithGroup(name: String): Deferred<List<PermissionPlayer>>
+
+    suspend fun sendPermissionUpdateToPlayersWithGroup(name: String)
+    suspend fun sendPermissionUpdateToPlayersWithBundle(name: String)
 
     suspend fun addPermissionGroup(uuid: UUID, group: PermissionGroupInfo)
     suspend fun removePermissionGroup(uuid: UUID, name: String)

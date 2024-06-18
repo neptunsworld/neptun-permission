@@ -15,6 +15,8 @@ class PermissionGroupAdapterImpl : PermissionGroupAdapter {
             newValue = permission,
             updateCache = true
         )
+
+        NeptunPermissionProvider.api.permissionPlayerAdapter.sendPermissionUpdateToPlayersWithGroup(groupName)
     }
 
     override suspend fun removePermission(groupName: String, permission: String) {
@@ -24,6 +26,8 @@ class PermissionGroupAdapterImpl : PermissionGroupAdapter {
             newValue = permission,
             updateCache = true
         )
+
+        NeptunPermissionProvider.api.permissionPlayerAdapter.sendPermissionUpdateToPlayersWithGroup(groupName)
     }
 
     override suspend fun addPermissionBundle(groupName: String, permissionBundle: PermissionBundle) {
@@ -33,6 +37,8 @@ class PermissionGroupAdapterImpl : PermissionGroupAdapter {
             newValue = permissionBundle,
             updateCache = true
         )
+
+        NeptunPermissionProvider.api.permissionPlayerAdapter.sendPermissionUpdateToPlayersWithGroup(groupName)
     }
 
     override suspend fun removePermissionBundle(groupName: String, bundleName: String) {
@@ -42,6 +48,8 @@ class PermissionGroupAdapterImpl : PermissionGroupAdapter {
             newValue = bundleName,
             updateCache = true
         )
+
+        NeptunPermissionProvider.api.permissionPlayerAdapter.sendPermissionUpdateToPlayersWithGroup(groupName)
     }
 
     override suspend fun addParentGroup(groupName: String, parentGroupName: String) {
@@ -51,6 +59,8 @@ class PermissionGroupAdapterImpl : PermissionGroupAdapter {
             newValue = parentGroupName,
             updateCache = true
         )
+
+        NeptunPermissionProvider.api.permissionPlayerAdapter.sendPermissionUpdateToPlayersWithGroup(groupName)
     }
 
     override suspend fun removeParentGroup(groupName: String, parentGroupName: String) {
@@ -60,6 +70,8 @@ class PermissionGroupAdapterImpl : PermissionGroupAdapter {
             newValue = parentGroupName,
             updateCache = true
         )
+
+        NeptunPermissionProvider.api.permissionPlayerAdapter.sendPermissionUpdateToPlayersWithGroup(groupName)
     }
 
     override suspend fun setMetadata(groupName: String, key: String, value: Any) {

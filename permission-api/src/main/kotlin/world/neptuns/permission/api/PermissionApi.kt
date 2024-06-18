@@ -7,7 +7,6 @@ import world.neptuns.permission.api.permission.PermissionBundleAdapter
 import world.neptuns.permission.api.permission.PermissionBundleService
 import world.neptuns.permission.api.player.PermissionPlayerAdapter
 import world.neptuns.permission.api.player.PermissionPlayerService
-import java.util.*
 
 interface PermissionApi {
 
@@ -19,8 +18,6 @@ interface PermissionApi {
 
     val permissionPlayerService: PermissionPlayerService
     val permissionPlayerAdapter: PermissionPlayerAdapter
-
-    suspend fun sendPlayerPermissionChange(uuid: UUID)
 
     companion object {
         val defaultGroupFormat = PermissionGroupFormat(
