@@ -1,3 +1,8 @@
 {
+  "permission.proxy.group.create.already_exist": "<prefix> <red>This group already exists!",
+  "permission.proxy.group.create": "<prefix> <gray>Group <group_color><name> <gray>created. (Priority: <white><priority><gray>, IsDefault: <white><default><gray>)",
+
+  "permission.proxy.group.delete.not_exist": "<prefix> <red>This group doesn't exist!",
+  "permission.proxy.group.delete": "<prefix> <gray>Group deleted."
 
 }

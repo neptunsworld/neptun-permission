@@ -8,18 +8,15 @@ import com.velocitypowered.api.proxy.Player
 import kotlinx.coroutines.runBlocking
 import world.neptuns.permission.api.NeptunPermissionProvider
 
-class VelocityPermissionProvider : PermissionProvider {
+class VelocityPermissionProvider(private val player: Player) : PermissionProvider, PermissionFunction {
 
     override fun createFunction(subject: PermissionSubject): PermissionFunction {
-        if (subject !is Player) return PermissionFunction { null }
-        return VelocityPermissionFunction(subject)
+        return this
     }
 
-    private data class VelocityPermissionFunction(val player: Player) : PermissionFunction {
-        override fun getPermissionValue(permission: String): Tristate = runBlocking {
-            val permissionPlayer = NeptunPermissionProvider.api.permissionPlayerService.getPermissionPlayer(player.uniqueId)
-            Tristate.fromBoolean(permissionPlayer?.hasPermission(permission) ?: false)
-        }
+    override fun getPermissionValue(permission: String): Tristate = runBlocking {
+        val permissionPlayer = NeptunPermissionProvider.api.permissionPlayerService.getPermissionPlayer(player.uniqueId)
+        Tristate.fromBoolean(permissionPlayer?.hasPermission(permission) ?: false)
     }
 
 }

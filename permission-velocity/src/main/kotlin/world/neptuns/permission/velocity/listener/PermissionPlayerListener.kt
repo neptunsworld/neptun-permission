@@ -23,7 +23,7 @@ class PermissionPlayerListener {
         if (permissionPlayer == null)
             this.permissionPlayerService.createPermissionPlayer(subject.uniqueId)
 
-        event.provider = VelocityPermissionProvider()
+        event.provider = VelocityPermissionProvider(subject)
     }
 
     @Subscribe(order = PostOrder.LAST)

@@ -58,7 +58,7 @@ object PermissibleInjector {
         val permissible = HUMAN_ENTITY_PERMISSIBLE_FIELD[player] as PermissibleBase
 
         if (permissible is BukkitPermissible) {
-            val lpPermissible: BukkitPermissible = permissible as BukkitPermissible
+            val lpPermissible: BukkitPermissible = permissible
 
             lpPermissible.clearPermissions()
             lpPermissible.active.set(false)

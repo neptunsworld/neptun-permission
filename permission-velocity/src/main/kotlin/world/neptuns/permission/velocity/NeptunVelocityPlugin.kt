@@ -10,9 +10,10 @@ import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.proxy.ProxyServer
 import world.neptuns.core.base.api.NeptunCoreProvider
 import world.neptuns.core.base.api.language.LangNamespace
-import world.neptuns.core.base.api.utils.NeptunPlugin
+import world.neptuns.core.base.api.util.NeptunPlugin
 import world.neptuns.permission.api.NeptunPermissionProvider
 import world.neptuns.permission.common.PermissionApiImpl
+import world.neptuns.permission.velocity.command.PermsCommand
 import world.neptuns.permission.velocity.listener.PermissionPlayerListener
 
 @Plugin(
@@ -45,6 +46,8 @@ class NeptunVelocityPlugin @Inject constructor(
         permissionApi.loadContents()
 
         this.proxyServer.eventManager.registerSuspend(this, PermissionPlayerListener())
+
+        registerCommand(PermsCommand())
     }
 
 }

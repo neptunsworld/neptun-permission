@@ -10,7 +10,6 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerLoginEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import world.neptuns.base.bukkit.api.NeptunCoreBukkitProvider
 import world.neptuns.permission.api.NeptunPermissionProvider
 import world.neptuns.permission.bukkit.NeptunBukkitPlugin
 import world.neptuns.permission.bukkit.permissible.BukkitPermissible
@@ -19,7 +18,6 @@ import world.neptuns.permission.bukkit.util.PermissibleInjector
 class PermissionPlayerListener(private val plugin: NeptunBukkitPlugin) : Listener {
 
     private val permissionPlayerService = NeptunPermissionProvider.api.permissionPlayerService
-    private val metadataController = NeptunCoreBukkitProvider.api.metadataController
 
     @EventHandler(priority = EventPriority.LOWEST)
     suspend fun onPlayerLogin(event: PlayerLoginEvent) {
@@ -33,7 +31,7 @@ class PermissionPlayerListener(private val plugin: NeptunBukkitPlugin) : Listene
 
         this.permissionPlayerService.cachePermissionPlayer(permissionPlayer.uuid, permissionPlayer)
 
-        PermissibleInjector.inject(player, BukkitPermissible(player, permissionPlayer, plugin))
+        PermissibleInjector.inject(player, BukkitPermissible(player, permissionPlayer))
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

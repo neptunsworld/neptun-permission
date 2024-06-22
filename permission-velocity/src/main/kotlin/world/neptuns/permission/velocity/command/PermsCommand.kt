@@ -1,29 +1,32 @@
 package world.neptuns.permission.velocity.command
 
-import com.velocitypowered.api.proxy.Player
-import world.neptuns.core.base.api.NeptunCoreProvider
 import world.neptuns.core.base.api.command.NeptunCommand
-import world.neptuns.core.base.api.command.NeptunCommandExecutor
 import world.neptuns.core.base.api.command.NeptunCommandPlatform
 import world.neptuns.core.base.api.command.NeptunCommandSender
+import world.neptuns.core.base.api.command.NeptunMainCommandExecutor
+import world.neptuns.core.base.api.command.extension.generateSimpleSuggestions
+import world.neptuns.core.base.api.command.extension.generateSuggestions
+import world.neptuns.core.base.api.command.extension.sendUsageFormatted
+import world.neptuns.core.base.api.command.subcommand.NeptunSubCommandExecutor
 
-@NeptunCommand(type = NeptunCommandPlatform.VELOCITY, name = "perms", permission = "neptun.perms")
-class PermsCommand(channelName: String) : NeptunCommandExecutor {
+@NeptunCommand(platform = NeptunCommandPlatform.VELOCITY, name = "perms", title = "Permission System", permission = "neptun.perms")
+class PermsCommand : NeptunMainCommandExecutor() {
 
-    private val playerAdapter = NeptunCoreProvider.api.getPlayerAdapter(Player::class.java)
-
-    override suspend fun execute(sender: NeptunCommandSender, args: List<String>) {
-        if (!sender.isPlayer()) return
-        val player = sender.castTo(Player::class.java)
-
+    override suspend fun defaultExecute(sender: NeptunCommandSender) {
+        sendUsageFormatted(sender)
     }
 
-    override fun sendUsage(sender: NeptunCommandSender) {
-        // /perms
+    override fun initSubCommands(subCommandExecutors: MutableList<NeptunSubCommandExecutor>) {
+        subCommandExecutors.add(PermsGroupListSubCommand())
+        subCommandExecutors.add(PermsGroupCreateSubCommand())
+        subCommandExecutors.add(PermsGroupCreateSubCommand())
     }
 
-    override suspend fun onTabComplete(sender: NeptunCommandSender, args: List<String>): List<String> {
-        TODO("Not yet implemented")
+    override suspend fun onDefaultTabComplete(sender: NeptunCommandSender, args: List<String>): List<String> {
+        return buildList {
+            addAll(generateSimpleSuggestions(args, 0) { add("groups") })
+            addAll(generateSuggestions(args, 1) { add("groups") })
+        }
     }
 
 }
