@@ -10,6 +10,7 @@ import world.neptuns.core.base.api.command.subcommand.NeptunSubCommandExecutor
 import world.neptuns.core.base.api.language.LineKey
 import world.neptuns.core.base.api.player.extension.sendMessage
 import world.neptuns.permission.api.NeptunPermissionProvider
+import world.neptuns.permission.velocity.util.CheckUtil
 
 @NeptunSubCommand(length = 3, parts = "group <Name> setDefault")
 class PermsGroupSetDefaultSubCommand : NeptunSubCommandExecutor {
@@ -20,10 +21,10 @@ class PermsGroupSetDefaultSubCommand : NeptunSubCommandExecutor {
         val player = sender.castTo(Player::class.java) ?: return
 
         val groupName = findArgument(player, "name", args, String::class.java) ?: return
-        val permissionGroup = this.groupService.getPermissionGroup(groupName)
+        val permissionGroup = CheckUtil.checkPermissionGroup(player, groupName) ?: return
 
-        if (permissionGroup == null) {
-            player.sendMessage(LineKey.key("permission.proxy.group.not_exist"))
+        if (permissionGroup.hasPermission("*")) {
+            player.sendMessage(LineKey.key("permission.proxy.group.set_default.to_powerful"))
             return
         }
 

@@ -1,4 +1,6 @@
 {
+  "permission.proxy.invalid_time_unit": "<prefix> <red>Invalid time unit! Use: <unit>",
+
   "permission.proxy.group.create.already_exist": "<prefix> <red>This group already exists!",
   "permission.proxy.group.create": "<prefix> <gray>Group <group_color><name> <gray>created. (Priority: <white><priority><gray>, IsDefault: <white><default><gray>)",
 
@@ -7,6 +9,24 @@
   "permission.proxy.group.delete.default_group_not_deletable": "<prefix> <red>You can't manually delete the default group! At first make another group to default...",
   "permission.proxy.group.delete": "<prefix> <gray>Group deleted.",
 
-  "permission.proxy.group.set_default": "<prefix> <gray>Set default group to <white><name><gray>."
+  "permission.proxy.group.set_default.to_powerful": "<prefix> <red>This group is too powerful to be the default group!",
+  "permission.proxy.group.set_default": "<prefix> <gray>Set default group to <white><name><gray>.",
+
+  "permission.proxy.group.permission.already_set": "<prefix> <red>This group already has this permission.",
+  "permission.proxy.group.permission.not_set": "<prefix> <red>This group doesn't have this permission!",
+  "permission.proxy.group.permission.added": "<prefix> <gray>Added permission <white><name> <gray>to group <white><group><gray>. (Lasts: <white><duration>)",
+  "permission.proxy.group.permission.removed": "<prefix> <gray>Removed permission <white><name> <gray>from group <white><group><gray>.",
+
+  "permission.proxy.group.parent.already_set": "<prefix> <red>This group already inherits from <parent>!",
+  "permission.proxy.group.parent.not_set": "<prefix> <red>This group doesn't inherit from <parent>!",
+  "permission.proxy.group.parent.added": "<prefix> <gray>Group <white><name> <gray>inherits now from <white><parent><gray>.",
+  "permission.proxy.group.parent.removed": "<prefix> <gray>Group <white><name> <gray>no longer inherits from <white><parent><gray>.",
+
+  "permission.proxy.group.bundle.already_set": "<prefix> <red>This group already has this permission bundle!",
+  "permission.proxy.group.bundle.not_set": "<prefix> <red>This group doesn't have this permission bundle!",
+  "permission.proxy.group.bundle.added": "<prefix> <gray>Added permission bundle <white><name> <gray>to group <white><group><gray>. (Lasts: <white><duration>)",
+  "permission.proxy.group.bundle.removed": "<prefix> <gray>Removed permission bundle <white><name> <gray>from group <white><group><gray>.",
+
+  "permission.proxy.bundle.not_exist": "<prefix> <red>This permission bundle doesn't exist!"
 
 }

@@ -9,6 +9,7 @@ import world.neptuns.core.base.api.command.subcommand.NeptunSubCommandExecutor
 import world.neptuns.core.base.api.language.LineKey
 import world.neptuns.core.base.api.player.extension.sendMessage
 import world.neptuns.permission.api.NeptunPermissionProvider
+import world.neptuns.permission.velocity.util.CheckUtil
 
 @NeptunSubCommand(length = 3, parts = "group <Name> delete")
 class PermsGroupDeleteSubCommand : NeptunSubCommandExecutor {
@@ -19,12 +20,7 @@ class PermsGroupDeleteSubCommand : NeptunSubCommandExecutor {
         val player = sender.castTo(Player::class.java) ?: return
 
         val groupName = findArgument(player, "name", args, String::class.java) ?: return
-        val permissionGroup = this.groupService.getPermissionGroup(groupName)
-
-        if (permissionGroup == null) {
-            player.sendMessage(LineKey.key("permission.proxy.group.not_exist"))
-            return
-        }
+        val permissionGroup = CheckUtil.checkPermissionGroup(player, groupName) ?: return
 
         if (permissionGroup.isDefault) {
             player.sendMessage(LineKey.key("permission.proxy.group.delete.default_group_not_deletable"))
