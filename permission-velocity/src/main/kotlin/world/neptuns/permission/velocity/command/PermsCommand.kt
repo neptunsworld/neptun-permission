@@ -19,7 +19,9 @@ class PermsCommand : NeptunMainCommandExecutor() {
     override fun initSubCommands(subCommandExecutors: MutableList<NeptunSubCommandExecutor>) {
         subCommandExecutors.add(PermsGroupListSubCommand())
         subCommandExecutors.add(PermsGroupCreateSubCommand())
-        subCommandExecutors.add(PermsGroupCreateSubCommand())
+        subCommandExecutors.add(PermsGroupDeleteSubCommand())
+        subCommandExecutors.add(PermsGroupSetDefaultSubCommand())
+        subCommandExecutors.add(PermsGroupPermListSubCommand())
     }
 
     override suspend fun onDefaultTabComplete(sender: NeptunCommandSender, args: List<String>): List<String> {

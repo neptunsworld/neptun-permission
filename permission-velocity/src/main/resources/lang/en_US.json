@@ -2,7 +2,11 @@
   "permission.proxy.group.create.already_exist": "<prefix> <red>This group already exists!",
   "permission.proxy.group.create": "<prefix> <gray>Group <group_color><name> <gray>created. (Priority: <white><priority><gray>, IsDefault: <white><default><gray>)",
 
-  "permission.proxy.group.delete.not_exist": "<prefix> <red>This group doesn't exist!",
-  "permission.proxy.group.delete": "<prefix> <gray>Group deleted."
+  "permission.proxy.group.not_exist": "<prefix> <red>This group doesn't exist!",
+
+  "permission.proxy.group.delete.default_group_not_deletable": "<prefix> <red>You can't manually delete the default group! At first make another group to default...",
+  "permission.proxy.group.delete": "<prefix> <gray>Group deleted.",
+
+  "permission.proxy.group.set_default": "<prefix> <gray>Set default group to <white><name><gray>."
 
 }

@@ -14,6 +14,8 @@ interface PermissionGroupAdapter {
     suspend fun addParentGroup(groupName: String, parentGroupName: String)
     suspend fun removeParentGroup(groupName: String, parentGroupName: String)
 
+    suspend fun setDefault(groupName: String, newDefaultState: Boolean)
+
     suspend fun setMetadata(groupName: String, key: String, value: Any)
     suspend fun removeMetadata(groupName: String, key: String)
 

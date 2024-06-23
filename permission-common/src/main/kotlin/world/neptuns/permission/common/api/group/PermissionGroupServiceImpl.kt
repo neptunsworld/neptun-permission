@@ -26,6 +26,11 @@ class PermissionGroupServiceImpl : PermissionGroupService {
 
     init {
         GlobalScope.launch(Dispatchers.IO) {
+            permissionGroupRepository.onInsertion { name, permissionGroup ->
+                if (permissionGroupCache.contains(name)) return@onInsertion
+                permissionGroupCache.insert(name, permissionGroup)
+            }
+
             permissionGroupRepository.onUpdate { name, permissionGroup ->
                 if (!permissionGroupCache.contains(name)) return@onUpdate
                 permissionGroupCache.update(name, permissionGroup)

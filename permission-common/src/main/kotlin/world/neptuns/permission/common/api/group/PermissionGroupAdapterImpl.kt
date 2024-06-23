@@ -74,6 +74,28 @@ class PermissionGroupAdapterImpl : PermissionGroupAdapter {
         NeptunPermissionProvider.api.permissionPlayerAdapter.sendPermissionUpdateToPlayersWithGroup(groupName)
     }
 
+    override suspend fun setDefault(groupName: String, newDefaultState: Boolean) {
+        val groupService = NeptunPermissionProvider.api.permissionGroupService
+
+        val defaultGroup = groupService.getDefaultGroup()
+
+        if (defaultGroup != null && newDefaultState) {
+            groupService.bulkUpdateEntry(
+                updateType = PermissionGroup.Update.IS_DEFAULT,
+                key = defaultGroup.name,
+                newValue = false,
+                updateCache = true
+            )
+        }
+
+        groupService.bulkUpdateEntry(
+            updateType = PermissionGroup.Update.IS_DEFAULT,
+            key = groupName,
+            newValue = newDefaultState,
+            updateCache = true
+        )
+    }
+
     override suspend fun setMetadata(groupName: String, key: String, value: Any) {
         NeptunPermissionProvider.api.permissionGroupService.bulkUpdateEntry(
             updateType = PermissionGroup.Update.METADATA_SET,

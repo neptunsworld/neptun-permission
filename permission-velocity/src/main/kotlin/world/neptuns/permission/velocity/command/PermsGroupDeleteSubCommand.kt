@@ -19,9 +19,15 @@ class PermsGroupDeleteSubCommand : NeptunSubCommandExecutor {
         val player = sender.castTo(Player::class.java) ?: return
 
         val groupName = findArgument(player, "name", args, String::class.java) ?: return
+        val permissionGroup = this.groupService.getPermissionGroup(groupName)
 
-        if (this.groupService.getPermissionGroups().none { it.name == groupName }) {
-            player.sendMessage(LineKey.key("permission.proxy.group.delete.not_exist"))
+        if (permissionGroup == null) {
+            player.sendMessage(LineKey.key("permission.proxy.group.not_exist"))
+            return
+        }
+
+        if (permissionGroup.isDefault) {
+            player.sendMessage(LineKey.key("permission.proxy.group.delete.default_group_not_deletable"))
             return
         }
 
