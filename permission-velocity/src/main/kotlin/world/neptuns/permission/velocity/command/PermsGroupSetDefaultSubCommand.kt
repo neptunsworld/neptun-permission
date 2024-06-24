@@ -12,10 +12,8 @@ import world.neptuns.core.base.api.player.extension.sendMessage
 import world.neptuns.permission.api.NeptunPermissionProvider
 import world.neptuns.permission.velocity.util.CheckUtil
 
-@NeptunSubCommand(length = 3, parts = "group <Name> setDefault")
+@NeptunSubCommand(length = 3, parts = "group <name> setDefault")
 class PermsGroupSetDefaultSubCommand : NeptunSubCommandExecutor {
-
-    private val groupService = NeptunPermissionProvider.api.permissionGroupService
 
     override suspend fun execute(sender: NeptunCommandSender, args: List<String>) {
         val player = sender.castTo(Player::class.java) ?: return

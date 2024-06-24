@@ -24,6 +24,11 @@ class PermissionBundleServiceImpl : PermissionBundleService {
 
     init {
         GlobalScope.launch(Dispatchers.IO) {
+            permissionBundleRepository.onInsertion { name, permissionBundle ->
+                if (permissionBundleCache.contains(name)) return@onInsertion
+                permissionBundleCache.insert(name, permissionBundle)
+            }
+
             permissionBundleRepository.onUpdate { name, permissionBundle ->
                 if (!permissionBundleCache.contains(name)) return@onUpdate
                 permissionBundleCache.update(name, permissionBundle)

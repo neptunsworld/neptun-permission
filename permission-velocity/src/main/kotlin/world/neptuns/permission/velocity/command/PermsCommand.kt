@@ -32,13 +32,13 @@ class PermsCommand : NeptunMainCommandExecutor() {
 
         subCommandExecutors.add(PermsGroupBundleListSubCommand())
         subCommandExecutors.add(PermsGroupBundleAddSubCommand())
+        subCommandExecutors.add(PermsGroupBundleRemoveSubCommand())
     }
 
     override suspend fun onDefaultTabComplete(sender: NeptunCommandSender, args: List<String>): List<String> {
         return buildList {
             addAll(generateSimpleSuggestions(args, 0) { add("groups") })
             addAll(generateSuggestions(args, 1) { add("groups") })
-
             addAll(generateSimpleSuggestions(args, 0) { add("group") })
             addAll(generateSuggestions(args, 1) { add("group") })
         }

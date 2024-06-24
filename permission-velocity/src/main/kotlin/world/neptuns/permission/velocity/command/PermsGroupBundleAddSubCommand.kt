@@ -14,7 +14,7 @@ import world.neptuns.permission.api.PermissionApi
 import world.neptuns.permission.velocity.util.CheckUtil
 import java.util.concurrent.TimeUnit
 
-@NeptunSubCommand(minLength = 5, maxLength = 7, parts = "group <name> bundle add <bundle> [time] [unit]")
+@NeptunSubCommand(minLength = 5, maxLength = 7, parts = "group <name> bundle add <bundleName> [time] [unit]")
 class PermsGroupBundleAddSubCommand : NeptunSubCommandExecutor {
 
     private val availableTimeUnits: List<TimeUnit> = listOf(TimeUnit.MINUTES, TimeUnit.HOURS, TimeUnit.DAYS)
@@ -23,7 +23,7 @@ class PermsGroupBundleAddSubCommand : NeptunSubCommandExecutor {
         val player = sender.castTo(Player::class.java) ?: return
 
         val groupName = findArgument(player, "name", args, String::class.java) ?: return
-        val bundleName = findArgument(player, "bundle", args, String::class.java) ?: return
+        val bundleName = findArgument(player, "bundleName", args, String::class.java) ?: return
 
         val permissionGroup = CheckUtil.checkPermissionGroup(player, groupName) ?: return
         val permissionBundle = CheckUtil.checkPermissionBundle(player, bundleName) ?: return
@@ -52,7 +52,7 @@ class PermsGroupBundleAddSubCommand : NeptunSubCommandExecutor {
         val timeoutTimestamp = if (time == null || timeUnit == null) PermissionApi.PERMANENT_DURATION else System.currentTimeMillis() + java.time.Duration.ofNanos(timeUnit.toNanos(time.toLong())).toMillis()
         val permissionBundleInfo = permissionBundle.toBundleInfo(timeoutTimestamp)
 
-        NeptunPermissionProvider.api.permissionGroupAdapter.addPermissionBundle(groupName, permissionBundle)
+        NeptunPermissionProvider.api.permissionGroupAdapter.addPermissionBundle(groupName, permissionBundleInfo)
 
         val durationLeftString = if (permissionBundleInfo.timeoutTimestamp == PermissionApi.PERMANENT_DURATION) "permanently" else permissionBundleInfo.durationLeft().toComponents { days, hours, minutes, seconds, _ -> "${days}d, ${hours}h, ${minutes}m, ${seconds}s" }
         player.sendMessage(LineKey.key("permission.proxy.group.bundle.added"),

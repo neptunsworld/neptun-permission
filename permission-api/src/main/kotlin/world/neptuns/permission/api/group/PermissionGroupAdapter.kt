@@ -1,6 +1,6 @@
 package world.neptuns.permission.api.group
 
-import world.neptuns.permission.api.permission.PermissionBundle
+import world.neptuns.permission.api.permission.PermissionBundleInfo
 import world.neptuns.permission.api.permission.PermissionInfo
 
 interface PermissionGroupAdapter {
@@ -8,7 +8,7 @@ interface PermissionGroupAdapter {
     suspend fun addPermission(groupName: String, permission: PermissionInfo)
     suspend fun removePermission(groupName: String, permission: String)
 
-    suspend fun addPermissionBundle(groupName: String, permissionBundle: PermissionBundle)
+    suspend fun addPermissionBundle(groupName: String, permissionBundleInfo: PermissionBundleInfo)
     suspend fun removePermissionBundle(groupName: String, bundleName: String)
 
     suspend fun addParentGroup(groupName: String, parentGroupName: String)

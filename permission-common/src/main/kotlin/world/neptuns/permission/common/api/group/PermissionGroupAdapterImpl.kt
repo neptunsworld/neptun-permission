@@ -3,7 +3,7 @@ package world.neptuns.permission.common.api.group
 import world.neptuns.permission.api.NeptunPermissionProvider
 import world.neptuns.permission.api.group.PermissionGroup
 import world.neptuns.permission.api.group.PermissionGroupAdapter
-import world.neptuns.permission.api.permission.PermissionBundle
+import world.neptuns.permission.api.permission.PermissionBundleInfo
 import world.neptuns.permission.api.permission.PermissionInfo
 
 class PermissionGroupAdapterImpl : PermissionGroupAdapter {
@@ -30,11 +30,11 @@ class PermissionGroupAdapterImpl : PermissionGroupAdapter {
         NeptunPermissionProvider.api.permissionPlayerAdapter.sendPermissionUpdateToPlayersWithGroup(groupName)
     }
 
-    override suspend fun addPermissionBundle(groupName: String, permissionBundle: PermissionBundle) {
+    override suspend fun addPermissionBundle(groupName: String, permissionBundleInfo: PermissionBundleInfo) {
         NeptunPermissionProvider.api.permissionGroupService.bulkUpdateEntry(
             updateType = PermissionGroup.Update.PERMISSION_BUNDLE_ADD,
             key = groupName,
-            newValue = permissionBundle,
+            newValue = permissionBundleInfo,
             updateCache = true
         )
 
