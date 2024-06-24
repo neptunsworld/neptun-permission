@@ -27,6 +27,11 @@
   "permission.proxy.group.bundle.added": "<prefix> <gray>Added permission bundle <white><name> <gray>to group <white><group><gray>. (Lasts: <white><duration>)",
   "permission.proxy.group.bundle.removed": "<prefix> <gray>Removed permission bundle <white><name> <gray>from group <white><group><gray>.",
 
+  "permission.proxy.group.metadata.already_set": "<prefix> <red>This group already has an metadata entry with key <key>!",
+  "permission.proxy.group.metadata.not_set": "<prefix> <red>This group doesn't have an metadata entry with key <key>!",
+  "permission.proxy.group.metadata.set": "<prefix> <gray>Metadata entry with key <white><key> <gray>and value <white><value> <gray>set to group <white><group><gray>.",
+  "permission.proxy.group.metadata.removed": "<prefix> <gray>Removed metadata entry with key <white><key> <gray>from group <white><group><gray>.",
+
   "permission.proxy.bundle.not_exist": "<prefix> <red>This permission bundle doesn't exist!"
 
 }

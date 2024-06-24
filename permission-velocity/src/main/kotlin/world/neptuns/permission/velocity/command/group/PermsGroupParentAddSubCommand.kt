@@ -1,4 +1,4 @@
-package world.neptuns.permission.velocity.command
+package world.neptuns.permission.velocity.command.group
 
 import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -12,8 +12,10 @@ import world.neptuns.core.base.api.player.extension.sendMessage
 import world.neptuns.permission.api.NeptunPermissionProvider
 import world.neptuns.permission.velocity.util.CheckUtil
 
-@NeptunSubCommand(length = 5, parts = "group <name> parent remove <parent>")
-class PermsGroupParentRemoveSubCommand : NeptunSubCommandExecutor {
+@NeptunSubCommand(length = 5, parts = "group <name> parent add <parent>")
+class PermsGroupParentAddSubCommand : NeptunSubCommandExecutor {
+
+    private val groupService = NeptunPermissionProvider.api.permissionGroupService
 
     override suspend fun execute(sender: NeptunCommandSender, args: List<String>) {
         val player = sender.castTo(Player::class.java) ?: return
@@ -24,30 +26,16 @@ class PermsGroupParentRemoveSubCommand : NeptunSubCommandExecutor {
         val permissionGroup = CheckUtil.checkPermissionGroup(player, groupName) ?: return
         val parentPermissionGroup = CheckUtil.checkPermissionGroup(player, parentGroupName) ?: return
 
-        if (permissionGroup.parents.none { it.equals(groupName, true) }) {
-            player.sendMessage(LineKey.key("permission.proxy.group.parent.not_set"), Placeholder.parsed("parent", parentPermissionGroup.name))
-            return
-        }
-
-        NeptunPermissionProvider.api.permissionGroupAdapter.removeParentGroup(groupName, parentGroupName)
-        player.sendMessage(LineKey.key("permission.proxy.group.parent.removed"),
+        NeptunPermissionProvider.api.permissionGroupAdapter.addParentGroup(groupName, parentGroupName)
+        player.sendMessage(LineKey.key("permission.proxy.group.parent.added"),
             Placeholder.parsed("name", permissionGroup.name),
             Placeholder.parsed("parent", parentPermissionGroup.name))
     }
 
     override suspend fun onTabComplete(sender: NeptunCommandSender, args: List<String>): List<String> {
-        val player = sender.castTo(Player::class.java) ?: return emptyList()
-
         return buildList {
-            addAll(generateSuggestions(args, 4, listOf(Pair(0, "group"), Pair(2, "parent"))) { add("remove") })
-            addAll(generateSuggestions(args, 5, listOf(Pair(0, "group"), Pair(2, "parent"), Pair(3, "remove"))) {
-                val groupName = findArgument(player, "name", args, String::class.java)
-                groupName?.let {
-                    NeptunPermissionProvider.api.permissionGroupService.getPermissionGroup(it)?.let { group ->
-                        addAll(group.parents)
-                    }
-                }
-            })
+            addAll(generateSuggestions(args, 4, listOf(Pair(0, "group"), Pair(2, "parent"))) { add("add") })
+            addAll(generateSuggestions(args, 5, listOf(Pair(0, "group"), Pair(2, "parent"), Pair(3, "add"))) { addAll(groupService.getPermissionGroups().map { it.name }) })
         }
     }
 

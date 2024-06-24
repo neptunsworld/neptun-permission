@@ -1,4 +1,4 @@
-package world.neptuns.permission.velocity.command
+package world.neptuns.permission.velocity.command.group
 
 import com.velocitypowered.api.proxy.Player
 import world.neptuns.core.base.api.command.NeptunCommandSender

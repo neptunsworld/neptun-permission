@@ -26,13 +26,13 @@ class PermissionPlayerAdapterImpl : PermissionPlayerAdapter {
     }
 
     override suspend fun sendPermissionUpdateToPlayersWithBundle(name: String) {
-        for (permissionPlayer in getPermissionPlayersWithGroup(name).await()) {
+        for (permissionPlayer in getPermissionPlayersWithBundle(name).await()) {
             sendPlayerPermissionChange(permissionPlayer.uuid)
         }
     }
 
     override suspend fun sendPermissionUpdateToPlayersWithGroup(name: String) {
-        for (permissionPlayer in getPermissionPlayersWithBundle(name).await()) {
+        for (permissionPlayer in getPermissionPlayersWithGroup(name).await()) {
             sendPlayerPermissionChange(permissionPlayer.uuid)
         }
     }

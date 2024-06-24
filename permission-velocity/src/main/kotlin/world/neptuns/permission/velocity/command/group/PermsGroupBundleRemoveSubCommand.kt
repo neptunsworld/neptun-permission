@@ -1,4 +1,4 @@
-package world.neptuns.permission.velocity.command
+package world.neptuns.permission.velocity.command.group
 
 import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
