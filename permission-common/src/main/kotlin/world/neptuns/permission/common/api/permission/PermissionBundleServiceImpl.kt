@@ -44,7 +44,7 @@ class PermissionBundleServiceImpl : PermissionBundleService {
         return this.permissionBundleCache.getAll().toSet()
     }
 
-    override suspend fun createPermissionBundle(name: String, isAuthRequired: Boolean, timeoutTimestamp: Long) {
+    override suspend fun createPermissionBundle(name: String, isAuthRequired: Boolean) {
         newSuspendedTransaction {
             PermissionBundleEntity.new {
                 this.name = name

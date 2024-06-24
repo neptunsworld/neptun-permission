@@ -7,7 +7,7 @@ interface PermissionBundleService : Updatable<String, PermissionBundle.Update, A
     suspend fun getPermissionBundle(name: String): PermissionBundle?
     suspend fun getPermissionBundles(): Set<PermissionBundle>
 
-    suspend fun createPermissionBundle(name: String, isAuthRequired: Boolean, timeoutTimestamp: Long)
+    suspend fun createPermissionBundle(name: String, isAuthRequired: Boolean)
 
     suspend fun deletePermissionBundle(name: String)
 

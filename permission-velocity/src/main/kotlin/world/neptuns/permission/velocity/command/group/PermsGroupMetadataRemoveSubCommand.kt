@@ -39,7 +39,7 @@ class PermsGroupMetadataRemoveSubCommand : NeptunSubCommandExecutor {
 
         return buildList {
             addAll(generateSuggestions(args, 4, listOf(Pair(0, "group"), Pair(2, "metadata"))) { add("remove") })
-            addAll(generateSuggestions(args, 5, listOf(Pair(0, "group"), Pair(2, "metadata"), Pair(3, "set"))) {
+            addAll(generateSuggestions(args, 5, listOf(Pair(0, "group"), Pair(2, "metadata"), Pair(3, "remove"))) {
                 val groupName = findArgument(player, "name", args, String::class.java)
                 groupName?.let {
                     NeptunPermissionProvider.api.permissionGroupService.getPermissionGroup(it)?.let { group ->

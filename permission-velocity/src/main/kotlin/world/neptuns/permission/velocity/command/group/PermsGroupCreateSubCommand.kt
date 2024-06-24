@@ -26,7 +26,7 @@ class PermsGroupCreateSubCommand : NeptunSubCommandExecutor {
         val color = findArgument(player, "color", args, TextColor::class.java) ?: return
         val default = findArgument(player, "default", args, Boolean::class.java) ?: return
 
-        if (this.groupService.getPermissionGroups().any { it.name == groupName }) {
+        if (this.groupService.getPermissionGroups().any { it.name == groupName || it.priority == priority }) {
             player.sendMessage(LineKey.key("permission.proxy.group.create.already_exist"))
             return
         }
@@ -51,8 +51,8 @@ class PermsGroupCreateSubCommand : NeptunSubCommandExecutor {
 
     override suspend fun onTabComplete(sender: NeptunCommandSender, args: List<String>): List<String> {
         return buildList {
-            addAll(generateSuggestions(args, 3) { add("create") })
-            addAll(generateSuggestions(args, 6, listOf(Pair(2, "create"))) { addAll(listOf("true", "false")) })
+            addAll(generateSuggestions(args, 3, listOf(Pair(0, "group"))) { add("create") })
+            addAll(generateSuggestions(args, 6, listOf(Pair(0, "group"), Pair(2, "create"))) { addAll(listOf("true", "false")) })
         }
     }
 

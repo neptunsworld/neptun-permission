@@ -62,7 +62,6 @@ object PermissionTest {
         NeptunPermissionProvider.api.permissionBundleService.createPermissionBundle(
             name = "moderation_bundle",
             isAuthRequired = true,
-            -1L
         )
 
         delay(1000L)

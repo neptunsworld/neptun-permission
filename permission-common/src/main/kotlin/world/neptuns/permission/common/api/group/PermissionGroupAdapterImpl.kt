@@ -1,12 +1,21 @@
 package world.neptuns.permission.common.api.group
 
+import kotlinx.coroutines.Deferred
 import world.neptuns.permission.api.NeptunPermissionProvider
 import world.neptuns.permission.api.group.PermissionGroup
 import world.neptuns.permission.api.group.PermissionGroupAdapter
 import world.neptuns.permission.api.permission.PermissionBundleInfo
 import world.neptuns.permission.api.permission.PermissionInfo
+import world.neptuns.permission.common.repository.PermissionGroupRepository
+import world.neptuns.streamline.api.NeptunStreamlineProvider
 
 class PermissionGroupAdapterImpl : PermissionGroupAdapter {
+
+    private val groupRepo = NeptunStreamlineProvider.api.repositoryLoader.get(PermissionGroupRepository::class.java)!!
+
+    override suspend fun getPermissionGroupWithBundle(name: String): Deferred<List<PermissionGroup>> {
+        return this.groupRepo.getAll { p -> p.permissionBundles.any { g -> g.name == name } }
+    }
 
     override suspend fun addPermission(groupName: String, permission: PermissionInfo) {
         NeptunPermissionProvider.api.permissionGroupService.bulkUpdateEntry(
@@ -107,11 +116,18 @@ class PermissionGroupAdapterImpl : PermissionGroupAdapter {
 
     override suspend fun removeMetadata(groupName: String, key: String) {
         NeptunPermissionProvider.api.permissionGroupService.bulkUpdateEntry(
-            updateType = PermissionGroup.Update.METADATA_SET,
+            updateType = PermissionGroup.Update.METADATA_REMOVE,
             key = groupName,
             newValue = key,
             updateCache = true
         )
+    }
+
+    override suspend fun deletePermissionGroup(groupName: String) {
+        NeptunPermissionProvider.api.permissionGroupService.deletePermissionGroup(groupName)
+        for (permissionPlayer in NeptunPermissionProvider.api.permissionPlayerAdapter.getPermissionPlayersWithGroup(groupName).await()) {
+            NeptunPermissionProvider.api.permissionPlayerAdapter.removePermissionGroup(permissionPlayer.uuid, groupName)
+        }
     }
 
 }

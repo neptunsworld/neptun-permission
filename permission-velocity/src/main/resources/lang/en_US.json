@@ -1,7 +1,17 @@
 {
   "permission.proxy.invalid_time_unit": "<prefix> <red>Invalid time unit! Use: <unit>",
 
-  "permission.proxy.group.create.already_exist": "<prefix> <red>This group already exists!",
+  "permission.proxy.bundle.create.already_exist": "<prefix> <red>There exists already a permission bundle with this name!",
+  "permission.proxy.bundle.create": "<prefix> <gray>Permission bundle <white><name> <gray>created.",
+
+  "permission.proxy.bundle.delete": "<prefix> <gray>Permission bundle <white><name> <gray>deleted.",
+
+  "permission.proxy.bundle.permission.already_set": "<prefix> <red>This permission bundle already has this permission.",
+  "permission.proxy.bundle.permission.not_set": "<prefix> <red>This permission bundle doesn't have this permission!",
+  "permission.proxy.bundle.permission.added": "<prefix> <gray>Added permission <white><name> <gray>to permission bundle <white><bundle><gray>.",
+  "permission.proxy.bundle.permission.removed": "<prefix> <gray>Removed permission <white><name> <gray>from permission bundle <white><bundle><gray>.",
+
+  "permission.proxy.group.create.already_exist": "<prefix> <red>There exists already a group with this name or priority!",
   "permission.proxy.group.create": "<prefix> <gray>Group <group_color><name> <gray>created. (Priority: <white><priority><gray>, IsDefault: <white><default><gray>)",
 
   "permission.proxy.group.not_exist": "<prefix> <red>This group doesn't exist!",
@@ -14,7 +24,7 @@
 
   "permission.proxy.group.permission.already_set": "<prefix> <red>This group already has this permission.",
   "permission.proxy.group.permission.not_set": "<prefix> <red>This group doesn't have this permission!",
-  "permission.proxy.group.permission.added": "<prefix> <gray>Added permission <white><name> <gray>to group <white><group><gray>. (Lasts: <white><duration>)",
+  "permission.proxy.group.permission.added": "<prefix> <gray>Added permission <white><name> <gray>to group <white><group><gray>. (Lasts: <white><duration><gray>)",
   "permission.proxy.group.permission.removed": "<prefix> <gray>Removed permission <white><name> <gray>from group <white><group><gray>.",
 
   "permission.proxy.group.parent.already_set": "<prefix> <red>This group already inherits from <parent>!",
@@ -24,13 +34,21 @@
 
   "permission.proxy.group.bundle.already_set": "<prefix> <red>This group already has this permission bundle!",
   "permission.proxy.group.bundle.not_set": "<prefix> <red>This group doesn't have this permission bundle!",
-  "permission.proxy.group.bundle.added": "<prefix> <gray>Added permission bundle <white><name> <gray>to group <white><group><gray>. (Lasts: <white><duration>)",
+  "permission.proxy.group.bundle.added": "<prefix> <gray>Added permission bundle <white><name> <gray>to group <white><group><gray>. (Lasts: <white><duration><gray>)",
   "permission.proxy.group.bundle.removed": "<prefix> <gray>Removed permission bundle <white><name> <gray>from group <white><group><gray>.",
 
   "permission.proxy.group.metadata.already_set": "<prefix> <red>This group already has an metadata entry with key <key>!",
   "permission.proxy.group.metadata.not_set": "<prefix> <red>This group doesn't have an metadata entry with key <key>!",
   "permission.proxy.group.metadata.set": "<prefix> <gray>Metadata entry with key <white><key> <gray>and value <white><value> <gray>set to group <white><group><gray>.",
   "permission.proxy.group.metadata.removed": "<prefix> <gray>Removed metadata entry with key <white><key> <gray>from group <white><group><gray>.",
+
+  "permission.proxy.group.info.title": "<gold>Information <gray>(Group: <group_color><group_name><gray>)",
+  "permission.proxy.group.info.permissions.sub_title": "<blue>► <gray>Permissions (<yellow><permission_count><gray>)",
+  "permission.proxy.group.info.permissions": "  <aqua>- <white><permission> <gray>(Lasts: <white><duration><gray>)",
+  "permission.proxy.group.info.parents.sub_title": "<blue>► <gray>Parents (<yellow><parent_count><gray>)",
+  "permission.proxy.group.info.parents": "  <aqua>- <white><parent>",
+  "permission.proxy.group.info.bundles.sub_title": "<blue>► <gray>Bundles (<yellow><bundle_count><gray>)",
+  "permission.proxy.group.info.bundles": "  <aqua>- <white><bundle> <gray>(Lasts: <white><duration><gray>)",
 
   "permission.proxy.bundle.not_exist": "<prefix> <red>This permission bundle doesn't exist!"
 

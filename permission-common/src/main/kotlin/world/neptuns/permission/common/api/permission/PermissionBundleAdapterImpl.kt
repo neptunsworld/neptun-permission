@@ -29,4 +29,16 @@ class PermissionBundleAdapterImpl : PermissionBundleAdapter {
         NeptunPermissionProvider.api.permissionPlayerAdapter.sendPermissionUpdateToPlayersWithBundle(bundleName)
     }
 
+    override suspend fun deletePermissionBundle(bundleName: String) {
+        NeptunPermissionProvider.api.permissionBundleService.deletePermissionBundle(bundleName)
+
+        for (permissionGroup in NeptunPermissionProvider.api.permissionGroupAdapter.getPermissionGroupWithBundle(bundleName).await()) {
+            NeptunPermissionProvider.api.permissionGroupAdapter.removePermissionBundle(permissionGroup.name, bundleName)
+        }
+
+        for (permissionPlayer in NeptunPermissionProvider.api.permissionPlayerAdapter.getPermissionPlayersWithBundle(bundleName).await()) {
+            NeptunPermissionProvider.api.permissionPlayerAdapter.removePermissionBundle(permissionPlayer.uuid, bundleName)
+        }
+    }
+
 }

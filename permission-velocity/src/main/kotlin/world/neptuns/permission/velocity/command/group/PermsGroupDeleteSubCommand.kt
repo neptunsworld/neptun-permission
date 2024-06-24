@@ -11,7 +11,7 @@ import world.neptuns.core.base.api.player.extension.sendMessage
 import world.neptuns.permission.api.NeptunPermissionProvider
 import world.neptuns.permission.velocity.util.CheckUtil
 
-@NeptunSubCommand(length = 3, parts = "group <Name> delete")
+@NeptunSubCommand(length = 3, parts = "group <name> delete")
 class PermsGroupDeleteSubCommand : NeptunSubCommandExecutor {
 
     private val groupService = NeptunPermissionProvider.api.permissionGroupService
@@ -27,7 +27,7 @@ class PermsGroupDeleteSubCommand : NeptunSubCommandExecutor {
             return
         }
 
-        this.groupService.deletePermissionGroup(groupName)
+        NeptunPermissionProvider.api.permissionGroupAdapter.deletePermissionGroup(groupName)
         player.sendMessage(LineKey.key("permission.proxy.group.delete"))
     }
 
