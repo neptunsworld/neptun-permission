@@ -120,7 +120,7 @@ class PermissionPlayerAdapterImpl : PermissionPlayerAdapter {
         return highestGroup?.collectAllPermissions() ?: emptySet()
     }
 
-    suspend fun sendPlayerPermissionChange(uuid: UUID) {
+    private suspend fun sendPlayerPermissionChange(uuid: UUID) {
         NeptunStreamlineProvider.api.packetController.sendPacket(PlayerUpdatePermissionsPacket(uuid))
     }
 

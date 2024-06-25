@@ -32,6 +32,11 @@ class PermissionPlayerListener(private val plugin: NeptunBukkitPlugin) : Listene
         this.permissionPlayerService.cachePermissionPlayer(permissionPlayer.uuid, permissionPlayer)
 
         PermissibleInjector.inject(player, BukkitPermissible(player, permissionPlayer))
+
+//        val permissionAttachment = BukkitPermissionAttachment(this.plugin, player, permissionPlayer)
+//        permissionAttachment.loadPermissions()
+
+//        NeptunCoreBukkitProvider.api.metadataController.apply(player, "attachment", permissionAttachment)
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -56,6 +61,9 @@ class PermissionPlayerListener(private val plugin: NeptunBukkitPlugin) : Listene
         }
 
         this.permissionPlayerService.removeCachedPermissionPlayer(player.uniqueId)
+
+//        val permissionAttachment = NeptunCoreBukkitProvider.api.metadataController.get<BukkitPermissionAttachment>(player, "attachment")
+//        permissionAttachment?.unloadPermissions()
     }
 
 }

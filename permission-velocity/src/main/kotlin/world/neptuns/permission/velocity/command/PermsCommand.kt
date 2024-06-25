@@ -10,6 +10,7 @@ import world.neptuns.core.base.api.command.extension.sendUsageFormatted
 import world.neptuns.core.base.api.command.subcommand.NeptunSubCommandExecutor
 import world.neptuns.permission.velocity.command.bundle.*
 import world.neptuns.permission.velocity.command.group.*
+import world.neptuns.permission.velocity.command.player.*
 
 @NeptunCommand(platform = NeptunCommandPlatform.VELOCITY, name = "perms", title = "Permission System", permission = "neptun.perms")
 class PermsCommand : NeptunMainCommandExecutor() {
@@ -48,6 +49,17 @@ class PermsCommand : NeptunMainCommandExecutor() {
         subCommandExecutors.add(PermsGroupMetadataList())
         subCommandExecutors.add(PermsGroupMetadataSetSubCommand())
         subCommandExecutors.add(PermsGroupMetadataRemoveSubCommand())
+
+        subCommandExecutors.add(PermsPlayerInfoSubCommand())
+
+        subCommandExecutors.add(PermsPlayerGroupAddSubCommand())
+        subCommandExecutors.add(PermsPlayerGroupRemoveSubCommand())
+
+        subCommandExecutors.add(PermsPlayerPermAddSubCommand())
+        subCommandExecutors.add(PermsPlayerPermRemoveSubCommand())
+
+        subCommandExecutors.add(PermsPlayerBundleAddSubCommand())
+        subCommandExecutors.add(PermsPlayerBundleRemoveSubCommand())
     }
 
     override suspend fun onDefaultTabComplete(sender: NeptunCommandSender, args: List<String>): List<String> {
@@ -63,6 +75,9 @@ class PermsCommand : NeptunMainCommandExecutor() {
 
             addAll(generateSimpleSuggestions(args, 0) { add("group") })
             addAll(generateSuggestions(args, 1) { add("group") })
+
+            addAll(generateSimpleSuggestions(args, 0) { add("player") })
+            addAll(generateSuggestions(args, 1) { add("player") })
         }
     }
 

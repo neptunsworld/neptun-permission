@@ -28,7 +28,7 @@ class PermsGroupPermAddSubCommand : NeptunSubCommandExecutor {
 
         val permissionGroup = CheckUtil.checkPermissionGroup(player, groupName) ?: return
 
-        if (permissionGroup.permissions.any { it.name.equals(permission, true)  }) {
+        if (permissionGroup.permissions.any { it.name.equals(permission, true) }) {
             player.sendMessage(LineKey.key("permission.proxy.group.permission.already_set"))
             return
         }

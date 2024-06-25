@@ -1,6 +1,8 @@
 {
   "permission.proxy.invalid_time_unit": "<prefix> <red>Invalid time unit! Use: <unit>",
 
+  "permission.proxy.bundle.not_exist": "<prefix> <red>This permission bundle doesn't exist!",
+
   "permission.proxy.bundle.create.already_exist": "<prefix> <red>There exists already a permission bundle with this name!",
   "permission.proxy.bundle.create": "<prefix> <gray>Permission bundle <white><name> <gray>created.",
 
@@ -50,6 +52,31 @@
   "permission.proxy.group.info.bundles.sub_title": "<blue>► <gray>Bundles (<yellow><bundle_count><gray>)",
   "permission.proxy.group.info.bundles": "  <aqua>- <white><bundle> <gray>(Lasts: <white><duration><gray>)",
 
-  "permission.proxy.bundle.not_exist": "<prefix> <red>This permission bundle doesn't exist!"
+  "permission.proxy.player.not_exist": "<prefix> <red>This permission player doesn't exist!",
+
+  "permission.proxy.player.group.already_set": "<prefix> <red>This player already has this permission group!",
+  "permission.proxy.player.group.not_set": "<prefix> <red>This player doesn't have this permission group!",
+  "permission.proxy.player.group.added": "<prefix> <gray>Added group <white><group> <gray>to player <white><player><gray>. (Lasts: <white><duration><gray>)",
+  "permission.proxy.player.group.received": "<obfuscated><gradient:blue:green>==============================================</obfuscated>\n\n<gold>Attention! <green>Rank received <yellow><group><green>.\n<green>Will last: <yellow><duration>\n\n<obfuscated><gradient:green:blue>==============================================</obfuscated>",
+  "permission.proxy.player.group.already_on_default_group": "<prefix> <red>You cannot remove this group from <name>. This player currently only has the default group left!",
+  "permission.proxy.player.group.removed": "<prefix> <gray>Removed group <white><group> <gray>from player <white><player><gray>.",
+
+  "permission.proxy.player.permission.already_set": "<prefix> <red>This player already has this permission.",
+  "permission.proxy.player.permission.not_set": "<prefix> <red>This player doesn't have this permission!",
+  "permission.proxy.player.permission.added": "<prefix> <gray>Added permission <white><name> <gray>to player <white><player><gray>. (Lasts: <white><duration><gray>)",
+  "permission.proxy.player.permission.removed": "<prefix> <gray>Removed permission <white><name> <gray>from player <white><player><gray>.",
+
+  "permission.proxy.player.bundle.already_set": "<prefix> <red>This player already has this permission bundle.",
+  "permission.proxy.player.bundle.not_set": "<prefix> <red>This player doesn't have this permission bundle!",
+  "permission.proxy.player.bundle.added": "<prefix> <gray>Added permission bundle <white><name> <gray>to player <white><player><gray>. (Lasts: <white><duration><gray>)",
+  "permission.proxy.player.bundle.removed": "<prefix> <gray>Removed permission bundle <white><name> <gray>from player <white><player><gray>.",
+
+  "permission.proxy.player.info.title": "<gold>Information <gray>(Player: <white><name><gray>)",
+  "permission.proxy.player.info.groups.sub_title": "<blue>► <gray>Groups (<yellow><group_count><gray>) (Highest group: <white><highest_group><gray>)",
+  "permission.proxy.player.info.groups": "  <aqua>- <white><group>",
+  "permission.proxy.player.info.private_permissions.sub_title": "<blue>► <gray>Private Permissions (<yellow><permission_count><gray>)",
+  "permission.proxy.player.info.private_permissions": "  <aqua>- <white><permission> <gray>(Lasts: <white><duration><gray>)",
+  "permission.proxy.player.info.private_bundles.sub_title": "<blue>► <gray>Private Bundles (<yellow><bundle_count><gray>)",
+  "permission.proxy.player.info.private_bundles": "  <aqua>- <white><bundle> <gray>(Lasts: <white><duration><gray>)"
 
 }
