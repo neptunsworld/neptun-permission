@@ -2,6 +2,7 @@ package world.neptuns.permission.velocity.command.player
 
 import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import world.neptuns.core.base.api.NeptunCoreProvider
 import world.neptuns.core.base.api.command.NeptunCommandSender
 import world.neptuns.core.base.api.command.extension.findArgument
 import world.neptuns.core.base.api.command.extension.generateSuggestions
@@ -14,8 +15,6 @@ import world.neptuns.permission.velocity.util.CheckUtil
 
 @NeptunSubCommand(length = 3, parts = "player <name> info")
 class PermsPlayerInfoSubCommand : NeptunSubCommandExecutor {
-
-    private val playerService = NeptunPermissionProvider.api.permissionPlayerService
 
     override suspend fun execute(sender: NeptunCommandSender, args: List<String>) {
         val player = sender.castTo(Player::class.java) ?: return
@@ -77,6 +76,7 @@ class PermsPlayerInfoSubCommand : NeptunSubCommandExecutor {
 
     override suspend fun onTabComplete(sender: NeptunCommandSender, args: List<String>): List<String> {
         return buildList {
+            addAll(generateSuggestions(args, 2, listOf(Pair(0, "player"))) { addAll(NeptunCoreProvider.api.playerService.getOnlinePlayerNames()) })
             addAll(generateSuggestions(args, 3, listOf(Pair(0, "player"))) { add("info") })
         }
     }

@@ -3,7 +3,7 @@ package world.neptuns.permission.velocity.util
 import com.velocitypowered.api.proxy.Player
 import world.neptuns.core.base.api.NeptunCoreProvider
 import world.neptuns.core.base.api.language.LineKey
-import world.neptuns.core.base.api.player.NeptunOnlinePlayer
+import world.neptuns.core.base.api.player.NeptunOfflinePlayer
 import world.neptuns.core.base.api.player.extension.sendMessage
 import world.neptuns.permission.api.NeptunPermissionProvider
 import world.neptuns.permission.api.group.PermissionGroup
@@ -34,22 +34,22 @@ object CheckUtil {
         return permissionGroup
     }
 
-    suspend fun checkPermissionPlayer(player: Player, playerName: String): Pair<NeptunOnlinePlayer, PermissionPlayer>? {
-        val onlinePlayer = NeptunCoreProvider.api.playerService.getOnlinePlayer(playerName)
+    suspend fun checkPermissionPlayer(player: Player, playerName: String): Pair<NeptunOfflinePlayer, PermissionPlayer>? {
+        val offlinePlayer = NeptunCoreProvider.api.playerService.getOfflinePlayerAsync(playerName).await()
 
-        if (onlinePlayer == null) {
+        if (offlinePlayer == null) {
             player.sendMessage(LineKey.key("permission.proxy.player.not_exist"))
             return null
         }
 
-        val permissionPlayer = NeptunPermissionProvider.api.permissionPlayerService.getPermissionPlayer(onlinePlayer.uuid)
+        val permissionPlayer = NeptunPermissionProvider.api.permissionPlayerService.getPermissionPlayer(offlinePlayer.uuid)
 
         if (permissionPlayer == null) {
             player.sendMessage(LineKey.key("permission.proxy.player.not_exist"))
             return null
         }
 
-        return onlinePlayer to permissionPlayer
+        return offlinePlayer to permissionPlayer
     }
 
 }
