@@ -14,15 +14,15 @@ class PermissionGroupValidator(private val groupService: PermissionGroupService,
     }
 
     private suspend fun checkGroupsForExpiredPermissions(permissionGroup: PermissionGroup) {
-        if (permissionGroup.permissions.none { it.isExpired() }) return
         val expiredPermissions = permissionGroup.permissions.filter { it.isExpired() }
+        if (expiredPermissions.isEmpty()) return
 
         this.groupAdapter.removePermissions(permissionGroup.name, expiredPermissions.map { it.name })
     }
 
     private suspend fun checkGroupsForExpiredBundles(permissionGroup: PermissionGroup) {
-        if (permissionGroup.permissionBundles.none { it.isExpired() }) return
         val expiredBundles = permissionGroup.permissionBundles.filter { it.isExpired() }
+        if (expiredBundles.isEmpty()) return
 
         this.groupAdapter.removePermissionBundles(permissionGroup.name, expiredBundles.map { it.name })
     }

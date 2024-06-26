@@ -37,6 +37,11 @@ class PermsPlayerGroupRemoveSubCommand : NeptunSubCommandExecutor {
             return
         }
 
+        if (permissionGroup.isDefault) {
+            player.sendMessage(LineKey.key("permission.proxy.player.group.default_group_not_removable"), Placeholder.parsed("name", onlinePlayer.name))
+            return
+        }
+
         NeptunPermissionProvider.api.permissionPlayerAdapter.removePermissionGroup(permissionPlayer.uuid, groupName)
         player.sendMessage(LineKey.key("permission.proxy.player.group.removed"),
             Placeholder.parsed("group", permissionGroup.name),

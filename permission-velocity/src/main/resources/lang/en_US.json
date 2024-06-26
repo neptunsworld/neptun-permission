@@ -58,7 +58,8 @@
   "permission.proxy.player.group.not_set": "<prefix> <red>This player doesn't have this permission group!",
   "permission.proxy.player.group.added": "<prefix> <gray>Added group <white><group> <gray>to player <white><player><gray>. (Lasts: <white><duration><gray>)",
   "permission.proxy.player.group.received": "<obfuscated><gradient:blue:green>==============================================</obfuscated>\n\n<gold>Attention! <green>Rank received <yellow><group><green>.\n<green>Will last: <yellow><duration>\n\n<obfuscated><gradient:green:blue>==============================================</obfuscated>",
-  "permission.proxy.player.group.already_on_default_group": "<prefix> <red>You cannot remove this group from <name>. This player currently only has the default group left!",
+  "permission.proxy.player.group.default_group_not_removable": "<prefix> <red>You can't remove the default group from <name>.",
+  "permission.proxy.player.group.already_on_default_group": "<prefix> <red>You can't remove this group from <name>. This player currently only has the default group left!",
   "permission.proxy.player.group.removed": "<prefix> <gray>Removed group <white><group> <gray>from player <white><player><gray>.",
 
   "permission.proxy.player.permission.already_set": "<prefix> <red>This player already has this permission.",
