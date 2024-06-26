@@ -1,8 +1,7 @@
 package world.neptuns.permission.watchdog
 
 import kotlinx.coroutines.*
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.Database
 import org.redisson.Redisson
 import org.redisson.api.RedissonClient
 import org.redisson.codec.SerializationCodec
@@ -54,7 +53,7 @@ class WatchdogApp {
         this.job.cancel()
     }
 
-    private fun establishDatabaseConnection(vararg tables: Table): RedissonClient {
+    private fun establishDatabaseConnection(): RedissonClient {
         val redisHostname = "37.114.34.73"
         val redisPort = 6379
         val redisPassword = "FxEjrfDu3Z6wP9dza8AU5b"
@@ -76,11 +75,6 @@ class WatchdogApp {
             user = "root",
             password = password
         )
-
-        transaction {
-            addLogger(StdOutSqlLogger)
-            SchemaUtils.create(*tables)
-        }
 
         NeptunStreamlineConnector.init(redissonClient)
 
