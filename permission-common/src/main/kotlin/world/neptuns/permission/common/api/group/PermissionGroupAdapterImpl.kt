@@ -39,6 +39,17 @@ class PermissionGroupAdapterImpl : PermissionGroupAdapter {
         NeptunPermissionProvider.api.permissionPlayerAdapter.sendPermissionUpdateToPlayersWithGroup(groupName)
     }
 
+    override suspend fun removePermissions(groupName: String, permissionNames: List<String>) {
+        NeptunPermissionProvider.api.permissionGroupService.bulkUpdateEntry(
+            updateType = PermissionGroup.Update.PERMISSION_LIST_REMOVE,
+            key = groupName,
+            newValue = permissionNames,
+            updateCache = true
+        )
+
+        NeptunPermissionProvider.api.permissionPlayerAdapter.sendPermissionUpdateToPlayersWithGroup(groupName)
+    }
+
     override suspend fun addPermissionBundle(groupName: String, permissionBundleInfo: PermissionBundleInfo) {
         NeptunPermissionProvider.api.permissionGroupService.bulkUpdateEntry(
             updateType = PermissionGroup.Update.PERMISSION_BUNDLE_ADD,
@@ -55,6 +66,17 @@ class PermissionGroupAdapterImpl : PermissionGroupAdapter {
             updateType = PermissionGroup.Update.PERMISSION_BUNDLE_REMOVE,
             key = groupName,
             newValue = bundleName,
+            updateCache = true
+        )
+
+        NeptunPermissionProvider.api.permissionPlayerAdapter.sendPermissionUpdateToPlayersWithGroup(groupName)
+    }
+
+    override suspend fun removePermissionBundles(groupName: String, bundleNames: List<String>) {
+        NeptunPermissionProvider.api.permissionGroupService.bulkUpdateEntry(
+            updateType = PermissionGroup.Update.PERMISSION_BUNDLE_LIST_REMOVE,
+            key = groupName,
+            newValue = bundleNames,
             updateCache = true
         )
 

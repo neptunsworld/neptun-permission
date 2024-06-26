@@ -17,12 +17,15 @@ interface PermissionPlayerAdapter {
 
     suspend fun addPermissionGroup(uuid: UUID, group: PermissionGroupInfo)
     suspend fun removePermissionGroup(uuid: UUID, name: String)
+    suspend fun removePermissionGroups(uuid: UUID, groupNames: List<String>)
 
     suspend fun addPermissionBundle(uuid: UUID, permissionBundle: PermissionBundleInfo)
     suspend fun removePermissionBundle(uuid: UUID, name: String)
+    suspend fun removePermissionBundles(uuid: UUID, bundleNames: List<String>)
 
     suspend fun addPrivatePermission(uuid: UUID, permission: PermissionInfo)
     suspend fun removePrivatePermission(uuid: UUID, permission: String)
+    suspend fun removePrivatePermissions(uuid: UUID, permissionNames: List<String>)
 
     suspend fun getHighestPermissionGroup(permissionPlayer: PermissionPlayer): Pair<PermissionGroup, PermissionGroupInfo>?
     suspend fun getPermissionsOfHighestGroup(permissionPlayer: PermissionPlayer): Set<PermissionInfo>

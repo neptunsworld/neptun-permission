@@ -10,9 +10,11 @@ interface PermissionGroupAdapter {
 
     suspend fun addPermission(groupName: String, permission: PermissionInfo)
     suspend fun removePermission(groupName: String, permission: String)
+    suspend fun removePermissions(groupName: String, permissionNames: List<String>)
 
     suspend fun addPermissionBundle(groupName: String, permissionBundleInfo: PermissionBundleInfo)
     suspend fun removePermissionBundle(groupName: String, bundleName: String)
+    suspend fun removePermissionBundles(groupName: String, bundleNames: List<String>)
 
     suspend fun addParentGroup(groupName: String, parentGroupName: String)
     suspend fun removeParentGroup(groupName: String, parentGroupName: String)

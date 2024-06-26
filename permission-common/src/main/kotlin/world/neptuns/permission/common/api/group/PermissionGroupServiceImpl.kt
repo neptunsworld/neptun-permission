@@ -119,33 +119,6 @@ class PermissionGroupServiceImpl : PermissionGroupService {
         }
     }
 
-//    override suspend fun loadPermissionGroup(name: String): Deferred<PermissionGroup?> = withContext(Dispatchers.IO) {
-//        suspendedTransactionAsync {
-//            val existingPermissionGroupEntity = PermissionGroupEntity.find { PermissionGroupTable.name eq name }.firstOrNull()
-//
-//            if (existingPermissionGroupEntity == null) {
-//                null
-//            } else {
-//                val permissionGroup = PermissionGroupImpl(
-//                    name,
-//                    existingPermissionGroupEntity.priority,
-//                    TextColor.fromHexString(existingPermissionGroupEntity.color)!!,
-//                    StreamlineApi.GSON.fromJson(existingPermissionGroupEntity.format, PermissionGroupFormat::class.java),
-//                    existingPermissionGroupEntity.permissions.map { PermissionInfoImpl(it.permission, it.timeoutTimestamp) }.toMutableSet(),
-//                    existingPermissionGroupEntity.permissionBundles.map { bundle -> NeptunPermissionProvider.api.permissionBundleService.getPermissionBundle(bundle.name)!! }.toMutableSet(),
-//                    existingPermissionGroupEntity.parents.map { it.parentName }.toMutableSet(),
-//                    existingPermissionGroupEntity.metadata.associate { Pair(it.key, it.value) }.toMutableMap(),
-//                    existingPermissionGroupEntity.isDefault
-//                )
-//
-//                cachePermissionGroup(name, permissionGroup)
-//                permissionGroupRepository.insert(name, permissionGroup)
-//
-//                permissionGroup
-//            }
-//        }
-//    }
-
     override suspend fun unloadPermissionGroup(name: String) {
         this.permissionGroupRepository.delete(name)
         this.permissionGroupCache.delete(name)
@@ -195,6 +168,17 @@ class PermissionGroupServiceImpl : PermissionGroupService {
                         .forEach(PermissionGroupPermissionInfoEntity::delete)
                 }
 
+                PermissionGroup.Update.PERMISSION_LIST_REMOVE -> {
+                    val permissionNames = newValue as List<String>
+
+                    for (permissionName in permissionNames) {
+                        PermissionGroupPermissionInfoEntity
+                            .find { (PermissionGroupPermissionInfoTable.groupName eq key) and (PermissionGroupPermissionInfoTable.permission eq permissionName) }
+                            .singleOrNull()
+                            ?.delete()
+                    }
+                }
+
                 PermissionGroup.Update.PERMISSION_BUNDLE_ADD -> {
                     val permissionBundleInfo = newValue as PermissionBundleInfo
 
@@ -217,6 +201,17 @@ class PermissionGroupServiceImpl : PermissionGroupService {
                         .find { PermissionGroupPermissionBundleInfoTable.groupName eq key }
                         .firstOrNull()
                         ?.delete()
+                }
+
+                PermissionGroup.Update.PERMISSION_BUNDLE_LIST_REMOVE -> {
+                    val bundleNames = newValue as List<String>
+
+                    for (bundleName in bundleNames) {
+                        PermissionGroupPermissionBundleInfoEntity
+                            .find { (PermissionGroupPermissionBundleInfoTable.groupName eq key) and (PermissionGroupPermissionBundleInfoTable.bundleName eq bundleName) }
+                            .singleOrNull()
+                            ?.delete()
+                    }
                 }
 
                 PermissionGroup.Update.PARENT_ADD -> {
@@ -280,9 +275,19 @@ class PermissionGroupServiceImpl : PermissionGroupService {
             PermissionGroup.Update.PERMISSION_REMOVE -> permissionGroup.permissions.removeIf { it.name == newValue as String }
             PermissionGroup.Update.PERMISSION_CLEAR -> permissionGroup.permissions.clear()
 
+            PermissionGroup.Update.PERMISSION_LIST_REMOVE -> {
+                val permissionNames = newValue as List<String>
+                permissionGroup.permissions.removeIf { permissionNames.contains(it.name) }
+            }
+
             PermissionGroup.Update.PERMISSION_BUNDLE_ADD -> permissionGroup.permissionBundles.add(newValue as PermissionBundleInfo)
             PermissionGroup.Update.PERMISSION_BUNDLE_REMOVE -> permissionGroup.permissionBundles.removeIf { it.name == newValue as String }
             PermissionGroup.Update.PERMISSION_BUNDLE_CLEAR -> permissionGroup.permissionBundles.clear()
+
+            PermissionGroup.Update.PERMISSION_BUNDLE_LIST_REMOVE -> {
+                val bundleNames = newValue as List<String>
+                permissionGroup.permissionBundles.removeIf { bundleNames.contains(it.name) }
+            }
 
             PermissionGroup.Update.PARENT_ADD -> permissionGroup.parents.add(newValue as String)
             PermissionGroup.Update.PARENT_REMOVE -> permissionGroup.parents.remove(newValue as String)

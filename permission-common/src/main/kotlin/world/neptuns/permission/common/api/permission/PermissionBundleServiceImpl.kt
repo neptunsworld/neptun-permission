@@ -82,6 +82,7 @@ class PermissionBundleServiceImpl : PermissionBundleService {
         this.permissionBundleCache.delete(name)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override suspend fun bulkUpdateEntry(updateType: PermissionBundle.Update, key: String, newValue: Any, updateCache: Boolean, result: (Unit) -> Unit) {
         newSuspendedTransaction {
             when (updateType) {
@@ -100,6 +101,17 @@ class PermissionBundleServiceImpl : PermissionBundleService {
                         ?.delete()
                 }
 
+                PermissionBundle.Update.PERMISSION_LIST_REMOVE -> {
+                    val permissionNames = newValue as List<String>
+
+                    for (permissionName in permissionNames) {
+                        PermissionBundlePermissionInfoEntity
+                            .find { (PermissionBundlePermissionInfoTable.bundleName eq key) and (PermissionBundlePermissionInfoTable.permission eq permissionName) }
+                            .singleOrNull()
+                            ?.delete()
+                    }
+                }
+
                 PermissionBundle.Update.IS_AUTH_REQUIRED -> {
                     PermissionBundleEntity.find { PermissionBundleTable.name eq key }.singleOrNull()?.apply {
                         this.isAuthRequired = newValue as Boolean
@@ -112,12 +124,19 @@ class PermissionBundleServiceImpl : PermissionBundleService {
         if (updateCache) updateCachedEntry(updateType, key, newValue, result)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override suspend fun updateCachedEntry(updateType: PermissionBundle.Update, key: String, newValue: Any, result: (Unit) -> Unit) {
         val permissionBundle = getPermissionBundle(key) ?: return
 
         when (updateType) {
             PermissionBundle.Update.PERMISSION_ADD -> permissionBundle.permissions.add(newValue as PermissionInfo)
             PermissionBundle.Update.PERMISSION_REMOVE -> permissionBundle.permissions.removeIf { it.name == newValue as String }
+
+            PermissionBundle.Update.PERMISSION_LIST_REMOVE -> {
+                val permissionNames = newValue as List<String>
+                permissionBundle.permissions.removeIf { permissionNames.contains(it.name) }
+            }
+
             PermissionBundle.Update.IS_AUTH_REQUIRED -> permissionBundle.isAuthRequired = newValue as Boolean
         }
 

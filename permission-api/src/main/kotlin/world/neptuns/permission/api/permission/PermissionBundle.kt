@@ -13,6 +13,7 @@ interface PermissionBundle : Serializable {
     enum class Update {
         PERMISSION_ADD,
         PERMISSION_REMOVE,
+        PERMISSION_LIST_REMOVE,
         IS_AUTH_REQUIRED;
     }
 

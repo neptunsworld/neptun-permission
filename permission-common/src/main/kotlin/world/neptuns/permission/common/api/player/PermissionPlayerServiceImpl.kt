@@ -41,6 +41,26 @@ class PermissionPlayerServiceImpl : PermissionPlayerService {
         }
     }
 
+    override suspend fun getPermissionPlayers(): Deferred<List<PermissionPlayer>> = withContext(Dispatchers.IO) {
+        suspendedTransactionAsync {
+            val permissionPlayers = mutableListOf<PermissionPlayer>()
+
+            for (permissionPlayerEntity in PermissionPlayerEntity.all()) {
+                val permissionPlayer = PermissionPlayerImpl(
+                    permissionPlayerEntity.uuid,
+                    permissionPlayerEntity.groups.map { group -> NeptunPermissionProvider.api.permissionGroupService.getPermissionGroup(group.groupName)!!.toGroupInfo(group.timeoutTimestamp) }.toMutableSet(),
+                    permissionPlayerEntity.privatePermissionBundles.map { bundleInfo -> NeptunPermissionProvider.api.permissionBundleService.getPermissionBundle(bundleInfo.name)!!.toBundleInfo(bundleInfo.timeoutTimestamp) }.toMutableSet(),
+                    permissionPlayerEntity.privatePermissions.map { PermissionInfoImpl(it.permission, it.timeoutTimestamp) }.toMutableSet(),
+                    if (permissionPlayerEntity.authSession == null) null else AuthSessionImpl(permissionPlayerEntity.authSession!!)
+                )
+
+                permissionPlayers.add(permissionPlayer)
+            }
+
+            permissionPlayers
+        }
+    }
+
     override suspend fun getPermissionPlayer(uuid: UUID): PermissionPlayer? {
         return this.permissionPlayerCache.get(uuid) ?: this.permissionPlayerRepository.get(uuid).await()
     }
@@ -119,6 +139,7 @@ class PermissionPlayerServiceImpl : PermissionPlayerService {
         this.permissionPlayerCache.delete(uuid)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override suspend fun bulkUpdateEntry(updateType: PermissionPlayer.Update, key: UUID, newValue: Any, updateCache: Boolean, result: (Unit) -> Unit) {
         newSuspendedTransaction {
             when (updateType) {
@@ -137,6 +158,17 @@ class PermissionPlayerServiceImpl : PermissionPlayerService {
                         .find { (PermissionPlayerGroupInfoTable.uuid eq key) and (PermissionPlayerGroupInfoTable.groupName eq newValue as String) }
                         .singleOrNull()
                         ?.delete()
+                }
+
+                PermissionPlayer.Update.PERMISSION_GROUP_LIST_REMOVE -> {
+                    val groupNames = newValue as List<String>
+
+                    for (groupName in groupNames) {
+                        PermissionPlayerGroupInfoEntity
+                            .find { (PermissionPlayerGroupInfoTable.uuid eq key) and (PermissionPlayerGroupInfoTable.groupName eq groupName) }
+                            .singleOrNull()
+                            ?.delete()
+                    }
                 }
 
                 PermissionPlayer.Update.PERMISSION_BUNDLE_ADD -> {
@@ -163,6 +195,17 @@ class PermissionPlayerServiceImpl : PermissionPlayerService {
                         ?.delete()
                 }
 
+                PermissionPlayer.Update.PERMISSION_BUNDLE_LIST_REMOVE -> {
+                    val bundleNames = newValue as List<String>
+
+                    for (bundleName in bundleNames) {
+                        PermissionPlayerPrivatePermissionBundleInfoEntity
+                            .find { (PermissionPlayerPrivatePermissionBundleInfoTable.uuid eq key) and (PermissionPlayerPrivatePermissionBundleInfoTable.bundleName eq bundleName) }
+                            .singleOrNull()
+                            ?.delete()
+                    }
+                }
+
                 PermissionPlayer.Update.PRIVATE_PERMISSION_ADD -> {
                     val permissionInfo = newValue as PermissionInfo
 
@@ -186,6 +229,17 @@ class PermissionPlayerServiceImpl : PermissionPlayerService {
                         .forEach(PermissionPlayerPrivatePermissionInfoEntity::delete)
                 }
 
+                PermissionPlayer.Update.PRIVATE_PERMISSION_LIST_REMOVE -> {
+                    val privatePermissionNames = newValue as List<String>
+
+                    for (privatePermissionName in privatePermissionNames) {
+                        PermissionPlayerPrivatePermissionInfoEntity
+                            .find { (PermissionPlayerPrivatePermissionInfoTable.uuid eq key) and (PermissionPlayerPrivatePermissionInfoTable.permission eq privatePermissionName) }
+                            .singleOrNull()
+                            ?.delete()
+                    }
+                }
+
                 PermissionPlayer.Update.AUTH_SESSION -> {
                     val authSession = newValue as AuthSession?
 
@@ -204,6 +258,7 @@ class PermissionPlayerServiceImpl : PermissionPlayerService {
         if (updateCache) updateCachedEntry(updateType, key, newValue, result)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override suspend fun updateCachedEntry(updateType: PermissionPlayer.Update, key: UUID, newValue: Any, result: (Unit) -> Unit) {
         val permissionPlayer = getPermissionPlayer(key) ?: return
 
@@ -211,13 +266,28 @@ class PermissionPlayerServiceImpl : PermissionPlayerService {
             PermissionPlayer.Update.PERMISSION_GROUP_ADD -> permissionPlayer.groups.add(newValue as PermissionGroupInfo)
             PermissionPlayer.Update.PERMISSION_GROUP_REMOVE -> permissionPlayer.groups.removeIf { it.name == newValue as String }
 
+            PermissionPlayer.Update.PERMISSION_GROUP_LIST_REMOVE -> {
+                val groupNames = newValue as List<String>
+                permissionPlayer.groups.removeIf { groupNames.contains(it.name) }
+            }
+
             PermissionPlayer.Update.PERMISSION_BUNDLE_ADD -> permissionPlayer.privatePermissionBundles.add(newValue as PermissionBundleInfo)
             PermissionPlayer.Update.PERMISSION_BUNDLE_REMOVE -> permissionPlayer.privatePermissionBundles.removeIf { it.name == newValue as String }
             PermissionPlayer.Update.PERMISSION_BUNDLE_CLEAR -> permissionPlayer.privatePermissionBundles.clear()
 
+            PermissionPlayer.Update.PERMISSION_BUNDLE_LIST_REMOVE -> {
+                val bundleNames = newValue as List<String>
+                permissionPlayer.privatePermissionBundles.removeIf { bundleNames.contains(it.name) }
+            }
+
             PermissionPlayer.Update.PRIVATE_PERMISSION_ADD -> permissionPlayer.privatePermissions.add(newValue as PermissionInfo)
             PermissionPlayer.Update.PRIVATE_PERMISSION_REMOVE -> permissionPlayer.privatePermissions.removeIf { it.name == newValue as String }
             PermissionPlayer.Update.PRIVATE_PERMISSION_CLEAR -> permissionPlayer.privatePermissions.clear()
+
+            PermissionPlayer.Update.PRIVATE_PERMISSION_LIST_REMOVE -> {
+                val permissionNames = newValue as List<String>
+                permissionPlayer.privatePermissions.removeIf { permissionNames.contains(it.name) }
+            }
 
             PermissionPlayer.Update.AUTH_SESSION -> permissionPlayer.authSession = newValue as AuthSession?
         }

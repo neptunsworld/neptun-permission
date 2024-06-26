@@ -59,6 +59,17 @@ class PermissionPlayerAdapterImpl : PermissionPlayerAdapter {
         sendPlayerPermissionChange(uuid)
     }
 
+    override suspend fun removePermissionGroups(uuid: UUID, groupNames: List<String>) {
+        NeptunPermissionProvider.api.permissionPlayerService.bulkUpdateEntry(
+            updateType = PermissionPlayer.Update.PERMISSION_GROUP_LIST_REMOVE,
+            key = uuid,
+            newValue = groupNames,
+            updateCache = true
+        )
+
+        sendPlayerPermissionChange(uuid)
+    }
+
     override suspend fun addPermissionBundle(uuid: UUID, permissionBundle: PermissionBundleInfo) {
         NeptunPermissionProvider.api.permissionPlayerService.bulkUpdateEntry(
             updateType = PermissionPlayer.Update.PERMISSION_BUNDLE_ADD,
@@ -81,6 +92,17 @@ class PermissionPlayerAdapterImpl : PermissionPlayerAdapter {
         sendPlayerPermissionChange(uuid)
     }
 
+    override suspend fun removePermissionBundles(uuid: UUID, bundleNames: List<String>) {
+        NeptunPermissionProvider.api.permissionPlayerService.bulkUpdateEntry(
+            updateType = PermissionPlayer.Update.PERMISSION_BUNDLE_LIST_REMOVE,
+            key = uuid,
+            newValue = bundleNames,
+            updateCache = true
+        )
+
+        sendPlayerPermissionChange(uuid)
+    }
+
     override suspend fun addPrivatePermission(uuid: UUID, permission: PermissionInfo) {
         NeptunPermissionProvider.api.permissionPlayerService.bulkUpdateEntry(
             updateType = PermissionPlayer.Update.PRIVATE_PERMISSION_ADD,
@@ -97,6 +119,17 @@ class PermissionPlayerAdapterImpl : PermissionPlayerAdapter {
             updateType = PermissionPlayer.Update.PRIVATE_PERMISSION_REMOVE,
             key = uuid,
             newValue = permission,
+            updateCache = true
+        )
+
+        sendPlayerPermissionChange(uuid)
+    }
+
+    override suspend fun removePrivatePermissions(uuid: UUID, permissionNames: List<String>) {
+        NeptunPermissionProvider.api.permissionPlayerService.bulkUpdateEntry(
+            updateType = PermissionPlayer.Update.PRIVATE_PERMISSION_LIST_REMOVE,
+            key = uuid,
+            newValue = permissionNames,
             updateCache = true
         )
 
