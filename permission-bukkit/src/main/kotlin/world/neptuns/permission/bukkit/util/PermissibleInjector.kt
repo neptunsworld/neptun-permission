@@ -31,16 +31,7 @@ object PermissibleInjector {
 
         check(oldPermissible !is BukkitPermissible) { "BukkitPermissible already injected into player $player" }
 
-        val oldClass: Class<out PermissibleBase> = oldPermissible.javaClass
-
-        if (PermissibleBase::class.java != oldClass) {
-            println(
-                """
-                    Player ${player.name} already has a custom permissible (${oldClass.name})!
-                    This is probably because you have multiple permission plugins installed.
-                """
-            )
-        }
+        // val oldClass: Class<out PermissibleBase> = oldPermissible.javaClass
 
         val attachments = PERMISSIBLE_BASE_ATTACHMENTS_FIELD[oldPermissible] as MutableList<*>
 
