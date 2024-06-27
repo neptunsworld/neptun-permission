@@ -1,23 +1,23 @@
 [versions]
-java = "17"
+java = "21"
 
 gson = "2.10.1"
 guava = "33.2.0-jre"
 
-mariadb = "3.0.7"
-sql-core = "0.50.1"
-sql-dao = "0.50.1"
-sql-jdbc = "0.50.1"
+mariadb = "3.4.0"
+sql-core = "0.52.0"
+sql-dao = "0.52.0"
+sql-jdbc = "0.52.0"
 
-redisson = "3.28.0"
+redisson = "3.32.0"
 
 streamline-api = "1.0-SNAPSHOT"
 
 velocity-api = "3.3.0-SNAPSHOT"
-async-velocity-api = "2.16.0"
+async-velocity-api = "2.17.0"
 
-paper-api = "1.20.4-R0.1-SNAPSHOT"
-async-paper-api = "2.16.0"
+paper-api = "1.21-R0.1-SNAPSHOT"
+async-paper-api = "2.17.0"
 
 kyori-adventure-api = "4.17.0"
 

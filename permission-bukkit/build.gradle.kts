@@ -19,6 +19,12 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.shadowJar {
+    manifest {
+        attributes["paperweight-mappings-namespace"] = "mojang"
+    }
+}
+
 kotlin {
     jvmToolchain(libs.versions.java.get().toInt())
 }
