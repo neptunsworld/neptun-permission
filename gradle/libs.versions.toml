@@ -23,6 +23,9 @@ kyori-adventure-api = "4.17.0"
 
 neptun-core-base-api = "1.0-SNAPSHOT"
 
+# ktor
+ktor = "2.3.12"
+
 [libraries]
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
@@ -51,9 +54,17 @@ kyori-minimessage-api = { group = "net.kyori", name = "adventure-text-minimessag
 neptun-core-base-api = { group = "world.neptuns.core.base", name = "base-api", version.ref = "neptun-core-base-api" }
 neptun-core-bukkit-api = { group = "world.neptuns.core.base", name = "base-bukkit-api", version.ref = "neptun-core-base-api" }
 
+#ktor
+ktor-server-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
+ktor-server-netty = { group = "io.ktor", name = "ktor-server-netty", version.ref = "ktor" }
+ktor-server-content-negotiation = { group = "io.ktor", name = "ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-server-auth = { group = "io.ktor", name = "ktor-server-auth", version.ref = "ktor" }
+ktor-server-serialization-gson = { group = "io.ktor", name = "ktor-serialization-gson", version.ref = "ktor" }
+
 [bundles]
 database = ["redisson", "mariadb", "sql-core", "sql-dao", "sql-jdbc"]
 streamline = ["streamline-api", "streamline-common"]
 velocity = ["velocity-api", "async-velocity-api", "async-velocity-core"]
 paper = ["paper-api", "async-paper-api", "async-paper-core"]
 kyori = ["kyori-adventure-api", "kyori-minimessage-api"]
+ktor = ["ktor-server-core", "ktor-server-netty", "ktor-server-content-negotiation", "ktor-server-auth", "ktor-server-serialization-gson"]
