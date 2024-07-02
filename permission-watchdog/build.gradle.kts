@@ -8,8 +8,20 @@ plugins {
 }
 
 dependencies {
+    implementation(libs.gson)
     implementation(libs.bundles.database)
     implementation(libs.streamline.common)
+
+    implementation("io.ktor:ktor-server-core:2.3.12")
+    implementation("io.ktor:ktor-server-netty:2.3.12")
+    implementation("io.ktor:ktor-server-auth:2.3.12")
+    // implementation("io.ktor:ktor-server-auth-oauth:2.3.12")
+    implementation("io.ktor:ktor-server-status-pages:2.3.12")
+    implementation("io.ktor:ktor-server-content-negotiation:2.3.12")
+    implementation("io.ktor:ktor-serialization-gson:2.3.12")
+    implementation("ch.qos.logback:logback-classic:1.2.6")
+    testImplementation("io.ktor:ktor-server-test-host-jvm:2.3.12")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.23")
 
     compileOnly(project(":permission-api"))
     implementation(project(":permission-common"))

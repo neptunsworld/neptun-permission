@@ -7,7 +7,6 @@ import org.redisson.api.RedissonClient
 import org.redisson.codec.SerializationCodec
 import org.redisson.config.Config
 import world.neptuns.permission.api.NeptunPermissionProvider
-import world.neptuns.permission.api.PermissionApi
 import world.neptuns.permission.common.PermissionApiImpl
 import world.neptuns.permission.watchdog.validation.PermissionBundleValidator
 import world.neptuns.permission.watchdog.validation.PermissionGroupValidator
@@ -18,7 +17,7 @@ import world.neptuns.streamline.common.NeptunStreamlineConnector
 class WatchdogApp {
 
     private val redissonClient: RedissonClient
-    private val permissionApi: PermissionApi
+    private val permissionApi: PermissionApiImpl
     private lateinit var job: Job
 
     private val permissionBundleValidator: PermissionBundleValidator
@@ -30,6 +29,10 @@ class WatchdogApp {
         this.permissionApi = PermissionApiImpl()
 
         NeptunPermissionProvider.api = permissionApi
+
+        runBlocking {
+            permissionApi.loadContents()
+        }
 
         this.permissionBundleValidator = PermissionBundleValidator(this.permissionApi.permissionBundleService, this.permissionApi.permissionBundleAdapter)
         this.permissionGroupValidator = PermissionGroupValidator(this.permissionApi.permissionGroupService, this.permissionApi.permissionGroupAdapter)

@@ -23,6 +23,19 @@ interface PermissionGroupService : Updatable<String, PermissionGroup.Update, Any
         isDefault: Boolean,
     )
 
+    suspend fun createPermissionGroup(permissionGroup: PermissionGroup) {
+        createPermissionGroup(
+            name = permissionGroup.name,
+            priority = permissionGroup.priority,
+            color = TextColor.fromHexString(permissionGroup.hexColorCode)!!,
+            format = permissionGroup.format,
+            permissions = permissionGroup.permissions,
+            permissionBundles = permissionGroup.permissionBundles,
+            parents = permissionGroup.parents,
+            isDefault = permissionGroup.isDefault,
+        )
+    }
+
     suspend fun deletePermissionGroup(name: String)
 
     suspend fun unloadPermissionGroup(name: String)
