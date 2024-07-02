@@ -5,10 +5,15 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import world.neptuns.permission.api.group.PermissionGroupAdapter
 import world.neptuns.permission.api.group.PermissionGroupService
 import world.neptuns.permission.common.api.group.PermissionGroupImpl
+import world.neptuns.permission.common.api.permission.PermissionInfoImpl
 
-fun Routing.permissionGroupRouting(permissionGroupService: PermissionGroupService) {
+fun Routing.permissionGroupRouting(
+    permissionGroupService: PermissionGroupService,
+    permissionGroupAdapter: PermissionGroupAdapter,
+) {
 
     route("/groups") {
         get {
@@ -32,6 +37,48 @@ fun Routing.permissionGroupRouting(permissionGroupService: PermissionGroupServic
 
             //TODO: permissionGroupService.createPermissionGroup(group)
             call.respond(HttpStatusCode.Created, group)
+        }
+
+        get("/{groupName}/permissions") {
+            val groupName = call.parameters["groupName"]
+            if (groupName == null) {
+                call.respond(HttpStatusCode.BadRequest, "Group name is missing")
+                return@get
+            }
+
+            val permissionGroup = permissionGroupService.getPermissionGroup(groupName)
+
+            if (permissionGroup == null) {
+                call.respond(HttpStatusCode.BadRequest, "Group doesn't exists!")
+                return@get
+            }
+
+            call.respond(permissionGroup.permissions)
+        }
+
+        put("/{groupName}/permissions") {
+            val groupName = call.parameters["groupName"]
+            if (groupName == null) {
+                call.respond(HttpStatusCode.BadRequest, "Group name is missing")
+                return@put
+            }
+
+            val permissionGroup = permissionGroupService.getPermissionGroup(groupName)
+
+            if (permissionGroup == null) {
+                call.respond(HttpStatusCode.BadRequest, "Group doesn't exists!")
+                return@put
+            }
+
+            val permission = call.receive<PermissionInfoImpl>()
+
+            if (permissionGroup.permissions.any { it.name.equals(permission.name, true) }) {
+                call.respond(HttpStatusCode.BadRequest, "Group already has the permission!")
+                return@put
+            }
+
+            //TODO: permissionGroupAdapter.addPermission(groupName, permission)
+            call.respond(HttpStatusCode.OK, "Permission added to group $groupName")
         }
 
         delete("/{name}") {
