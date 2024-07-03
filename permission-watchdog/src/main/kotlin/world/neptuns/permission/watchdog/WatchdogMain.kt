@@ -32,7 +32,7 @@ object WatchdogMain {
                 }
             }
             routing {
-                permissionGroupRouting(NeptunPermissionProvider.api.permissionGroupService)
+                permissionGroupRouting(NeptunPermissionProvider.api.permissionGroupService, NeptunPermissionProvider.api.permissionGroupAdapter)
             }
         }.start(wait = true)
     }
