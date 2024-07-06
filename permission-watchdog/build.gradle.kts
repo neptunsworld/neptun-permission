@@ -12,6 +12,7 @@ dependencies {
     implementation(libs.bundles.database)
     implementation(libs.streamline.common)
     implementation(libs.bundles.ktor)
+    implementation(libs.kyori.adventure.api)
 
     compileOnly(project(":permission-api"))
     implementation(project(":permission-common"))

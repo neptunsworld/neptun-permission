@@ -1,5 +1,6 @@
 package world.neptuns.permission.watchdog.rest
 
+import com.google.gson.GsonBuilder
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -9,8 +10,11 @@ import world.neptuns.permission.api.group.PermissionGroup
 import world.neptuns.permission.api.group.PermissionGroupAdapter
 import world.neptuns.permission.api.group.PermissionGroupService
 import world.neptuns.permission.api.permission.PermissionBundleInfo
+import world.neptuns.permission.api.permission.PermissionInfo
 import world.neptuns.permission.common.api.group.PermissionGroupImpl
 import world.neptuns.permission.common.api.permission.PermissionInfoImpl
+import world.neptuns.permission.watchdog.PermissionBundleInfoAdapter
+import world.neptuns.permission.watchdog.PermissionInfoAdapter
 
 fun Routing.permissionGroupRouting(
     groupService: PermissionGroupService,
@@ -22,15 +26,42 @@ fun Routing.permissionGroupRouting(
             call.respond(groupService.getPermissionGroups())
         }
         post {
-            val group = call.receive<PermissionGroupImpl>()
+
+            val gson = GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(PermissionInfo::class.java, PermissionInfoAdapter())
+                .registerTypeAdapter(PermissionBundleInfo::class.java, PermissionBundleInfoAdapter())
+                .create()
+//            try {
+//                val permissionGroup: PermissionGroupImpl = gson.fromJson(call.receiveText(), PermissionGroupImpl::class.java)
+//
+//                val requestBody = call.receiveText()
+//                println("Received request body: $requestBody")
+//            } catch (exception: Exception) {
+//                println("Error: ${exception.message}")
+//            }
+
+//            val group = call.receive<PermissionGroupImpl>()
+            val group = gson.fromJson(call.receiveText(), PermissionGroupImpl::class.java)
+//            println("${gson.toJson(group)}")
 
             if (groupService.getPermissionGroup(group.name) != null) {
-                call.respond(HttpStatusCode.BadRequest, "Group already exists!")
+                println("Group already exists!")
+                //call.respond(HttpStatusCode.BadRequest, "Group already exists!")
+//                call.respond(HttpStatusCode.BadRequest, ErrorResponse(400, "Ungültige ID"))
+                call.respondText("{\"message\": \"Group already exists!\"}", status = HttpStatusCode.BadRequest)
                 return@post
             }
 
-            //TODO: permissionGroupService.createPermissionGroup(group)
-            call.respond(HttpStatusCode.Created, group)
+            //TODO: groupService.createPermissionGroup(group)
+            try {
+                println("123")
+                groupService.createPermissionGroup(group)
+                println("Group created!")
+                call.respond(HttpStatusCode.OK, group)
+            } catch (exception: Exception) {
+                println(exception.message)
+            }
         }
 
         route("/{groupName}") {
@@ -45,7 +76,14 @@ fun Routing.permissionGroupRouting(
                 val permissionGroup = validatePermissionGroup(groupService, groupName, call) ?: return@delete
 
                 //TODO: permissionGroupService.deletePermissionGroup(name)
-                call.respondText("Group ${permissionGroup.name} deleted!", status = HttpStatusCode.OK)
+                if (groupName == null) {
+                    call.respondText("Group not exists!", status = HttpStatusCode.BadRequest)
+                    return@delete
+                }
+
+                groupService.deletePermissionGroup(groupName)
+                println("Group deleted!")
+                call.respond(HttpStatusCode.OK, "Group ${permissionGroup.name} deleted!")
             }
 
             // permissions (get, add, delete)

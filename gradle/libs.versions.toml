@@ -61,6 +61,7 @@ ktor-server-content-negotiation = { group = "io.ktor", name = "ktor-server-conte
 ktor-server-auth = { group = "io.ktor", name = "ktor-server-auth", version.ref = "ktor" }
 ktor-server-serialization-gson = { group = "io.ktor", name = "ktor-serialization-gson", version.ref = "ktor" }
 ktor-server-cors = { group = "io.ktor", name = "ktor-server-cors", version.ref = "ktor" }
+ktor-server-status-pages-jvm = { group = "io.ktor", name = "ktor-server-status-pages-jvm", version.ref = "ktor" }
 
 [bundles]
 database = ["redisson", "mariadb", "sql-core", "sql-dao", "sql-jdbc"]
@@ -68,4 +69,4 @@ streamline = ["streamline-api", "streamline-common"]
 velocity = ["velocity-api", "async-velocity-api", "async-velocity-core"]
 paper = ["paper-api", "async-paper-api", "async-paper-core"]
 kyori = ["kyori-adventure-api", "kyori-minimessage-api"]
-ktor = ["ktor-server-core", "ktor-server-netty", "ktor-server-content-negotiation", "ktor-server-auth", "ktor-server-serialization-gson", "ktor-server-cors"]
+ktor = ["ktor-server-core", "ktor-server-netty", "ktor-server-content-negotiation", "ktor-server-auth", "ktor-server-serialization-gson", "ktor-server-cors", "ktor-server-status-pages-jvm"]

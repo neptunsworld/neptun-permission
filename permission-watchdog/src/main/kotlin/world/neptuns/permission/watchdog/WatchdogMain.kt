@@ -9,6 +9,8 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.routing.*
 import world.neptuns.permission.api.NeptunPermissionProvider
+import world.neptuns.permission.api.permission.PermissionBundleInfo
+import world.neptuns.permission.api.permission.PermissionInfo
 import world.neptuns.permission.watchdog.rest.permissionGroupRouting
 
 object WatchdogMain {
@@ -31,12 +33,15 @@ object WatchdogMain {
             install(ContentNegotiation) {
                 gson {
                     setPrettyPrinting()
+                        .registerTypeAdapter(PermissionInfo::class.java, PermissionInfoAdapter())
+                        .registerTypeAdapter(PermissionBundleInfo::class.java, PermissionBundleInfoAdapter())
                 }
             }
             install(CORS) {
                 allowMethod(HttpMethod.Options)
                 allowMethod(HttpMethod.Post)
                 allowMethod(HttpMethod.Get)
+                allowMethod(HttpMethod.Delete)
                 allowHeader(HttpHeaders.AccessControlAllowOrigin)
                 allowHeader(HttpHeaders.ContentType)
                 allowHeader(HttpHeaders.Authorization)
