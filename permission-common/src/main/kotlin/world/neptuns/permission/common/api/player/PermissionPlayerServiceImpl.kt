@@ -65,6 +65,21 @@ class PermissionPlayerServiceImpl : PermissionPlayerService {
         return this.permissionPlayerCache.get(uuid) ?: this.permissionPlayerRepository.get(uuid).await()
     }
 
+    override suspend fun getPermissionPlayerAsync(uuid: UUID): Deferred<PermissionPlayer?> {
+        return suspendedTransactionAsync(Dispatchers.IO) {
+            val permissionPlayerEntity = PermissionPlayerEntity.find { PermissionPlayerTable.uuid eq uuid }.firstOrNull()
+                ?: return@suspendedTransactionAsync null
+
+            PermissionPlayerImpl(
+                permissionPlayerEntity.uuid,
+                permissionPlayerEntity.groups.map { group -> NeptunPermissionProvider.api.permissionGroupService.getPermissionGroup(group.groupName)!!.toGroupInfo(group.timeoutTimestamp) }.toMutableSet(),
+                permissionPlayerEntity.privatePermissionBundles.map { bundleInfo -> NeptunPermissionProvider.api.permissionBundleService.getPermissionBundle(bundleInfo.name)!!.toBundleInfo(bundleInfo.timeoutTimestamp) }.toMutableSet(),
+                permissionPlayerEntity.privatePermissions.map { PermissionInfoImpl(it.permission, it.timeoutTimestamp) }.toMutableSet(),
+                if (permissionPlayerEntity.authSession == null) null else AuthSessionImpl(permissionPlayerEntity.authSession!!)
+            )
+        }
+    }
+
     override suspend fun createPermissionPlayer(uuid: UUID) {
         val defaultGroup = NeptunPermissionProvider.api.permissionGroupService.getDefaultGroup()
             ?: throw NullPointerException("No default group found... Cannot create PermissionPlayer!")

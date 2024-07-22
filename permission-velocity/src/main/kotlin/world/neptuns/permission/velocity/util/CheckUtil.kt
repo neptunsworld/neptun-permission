@@ -42,7 +42,7 @@ object CheckUtil {
             return null
         }
 
-        val permissionPlayer = NeptunPermissionProvider.api.permissionPlayerService.getPermissionPlayer(offlinePlayer.uuid)
+        val permissionPlayer = NeptunPermissionProvider.api.permissionPlayerService.getPermissionPlayerAsync(offlinePlayer.uuid).await()
 
         if (permissionPlayer == null) {
             player.sendMessage(LineKey.key("permission.proxy.player.not_exist"))

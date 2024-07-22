@@ -8,6 +8,7 @@ interface PermissionPlayerService : Updatable<UUID, PermissionPlayer.Update, Any
 
     suspend fun getPermissionPlayers(): Deferred<List<PermissionPlayer>>
     suspend fun getPermissionPlayer(uuid: UUID): PermissionPlayer?
+    suspend fun getPermissionPlayerAsync(uuid: UUID): Deferred<PermissionPlayer?>
 
     suspend fun createPermissionPlayer(uuid: UUID)
 
