@@ -20,11 +20,11 @@ object WatchdogMain {
         val app = WatchdogApp()
         app.start()
 
-        val webServer = startWebServer()
+        // val webServer = startWebServer()
 
         Runtime.getRuntime().addShutdownHook(Thread {
             app.stop()
-            webServer.stop()
+            // webServer.stop()
         })
     }
 

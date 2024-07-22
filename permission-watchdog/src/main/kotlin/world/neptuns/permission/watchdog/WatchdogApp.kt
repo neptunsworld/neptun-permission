@@ -8,6 +8,9 @@ import org.redisson.codec.SerializationCodec
 import org.redisson.config.Config
 import world.neptuns.permission.api.NeptunPermissionProvider
 import world.neptuns.permission.common.PermissionApiImpl
+import world.neptuns.permission.watchdog.validation.PermissionBundleValidator
+import world.neptuns.permission.watchdog.validation.PermissionGroupValidator
+import world.neptuns.permission.watchdog.validation.PermissionPlayerValidator
 import world.neptuns.streamline.common.NeptunStreamlineConnector
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -17,9 +20,9 @@ class WatchdogApp {
     private val permissionApi: PermissionApiImpl
     private lateinit var job: Job
 
-//    private val permissionBundleValidator: PermissionBundleValidator
-//    private val permissionGroupValidator: PermissionGroupValidator
-//    private val permissionPlayerValidator: PermissionPlayerValidator
+    private val permissionBundleValidator: PermissionBundleValidator
+    private val permissionGroupValidator: PermissionGroupValidator
+    private val permissionPlayerValidator: PermissionPlayerValidator
 
     init {
         this.redissonClient = establishDatabaseConnection()
@@ -31,17 +34,17 @@ class WatchdogApp {
             permissionApi.loadContents()
         }
 
-//        this.permissionBundleValidator = PermissionBundleValidator(this.permissionApi.permissionBundleService, this.permissionApi.permissionBundleAdapter)
-//        this.permissionGroupValidator = PermissionGroupValidator(this.permissionApi.permissionGroupService, this.permissionApi.permissionGroupAdapter)
-//        this.permissionPlayerValidator = PermissionPlayerValidator(this.permissionApi.permissionPlayerService, this.permissionApi.permissionPlayerAdapter)
+        this.permissionBundleValidator = PermissionBundleValidator(this.permissionApi.permissionBundleService, this.permissionApi.permissionBundleAdapter)
+        this.permissionGroupValidator = PermissionGroupValidator(this.permissionApi.permissionGroupService, this.permissionApi.permissionGroupAdapter)
+        this.permissionPlayerValidator = PermissionPlayerValidator(this.permissionApi.permissionPlayerService, this.permissionApi.permissionPlayerAdapter)
     }
 
     fun start() {
         this.job = GlobalScope.launch {
             while (isActive) {
-//                permissionBundleValidator.validatePermissionBundles()
-//                permissionGroupValidator.validatePermissionGroups()
-//                permissionPlayerValidator.validatePermissionPlayers()
+                permissionBundleValidator.validatePermissionBundles()
+                permissionGroupValidator.validatePermissionGroups()
+                permissionPlayerValidator.validatePermissionPlayers()
 
                 delay(5000L)
             }
