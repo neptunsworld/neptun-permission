@@ -10,6 +10,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerLoginEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.player.PlayerRespawnEvent
 import world.neptuns.permission.api.NeptunPermissionProvider
 import world.neptuns.permission.bukkit.NeptunBukkitPlugin
 import world.neptuns.permission.bukkit.permissible.BukkitPermissible
@@ -44,6 +45,7 @@ class PermissionPlayerListener(private val plugin: NeptunBukkitPlugin) : Listene
             return
         }
 
+        this.plugin.sendOpLevel(player)
         player.updateCommands()
     }
 
@@ -56,6 +58,14 @@ class PermissionPlayerListener(private val plugin: NeptunBukkitPlugin) : Listene
         }
 
         this.permissionPlayerService.removeCachedPermissionPlayer(player.uniqueId)
+    }
+
+    @EventHandler
+    suspend fun onPlayerRespawn(event: PlayerRespawnEvent) {
+        val player = event.player
+
+        this.plugin.sendOpLevel(player)
+        player.updateCommands()
     }
 
 }

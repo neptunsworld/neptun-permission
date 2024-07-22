@@ -2,9 +2,9 @@ package world.neptuns.permission.bukkit
 
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import world.neptuns.base.bukkit.api.NeptunBukkitPluginAdapter
 import world.neptuns.core.base.api.language.LangNamespace
 import world.neptuns.core.base.api.player.extension.uuid
@@ -36,9 +36,9 @@ class NeptunBukkitPlugin : NeptunBukkitPluginAdapter(null, false) {
                 Bukkit.getScheduler().runTask(this@NeptunBukkitPlugin, Runnable {
                     PermissibleInjector.uninject(player, true)
                     PermissibleInjector.inject(player, BukkitPermissible(player, permissionPlayer))
-                    runBlocking {
-                        player.updateCommands()
-                    }
+
+                    sendOpLevel(player)
+                    player.updateCommands()
                 })
             }
         }
@@ -50,5 +50,10 @@ class NeptunBukkitPlugin : NeptunBukkitPluginAdapter(null, false) {
     }
 
     override fun initNamespace(): LangNamespace = LangNamespace.create("permission.bukkit", "Perms")
+
+    fun sendOpLevel(player: Player) {
+        if (!player.hasPermission("minecraft.command.gamemode")) return
+        player.sendOpLevel(3)
+    }
 
 }
