@@ -59,7 +59,7 @@ class WatchdogApp {
     private fun establishDatabaseConnection(): RedissonClient {
         val redisHostname = "37.114.34.73"
         val redisPort = 6379
-        val redisPassword = "FxEjrfDu3Z6wP9dza8AU5b"
+        val redisPassword = "AuhfJG1hvemy5574n6rqfGqg"
 
         val config = Config()
         config.codec = SerializationCodec()
@@ -70,7 +70,7 @@ class WatchdogApp {
 
         val redissonClient = Redisson.create(config)
 
-        val password = "K{T4?f,AmV${"$"}${"p"}/U3Q+_%g^@"
+        val password = "6Rfl647pN1Yf2Zt0GgKtNMwh"
 
         Database.connect(
             url = "jdbc:mariadb://37.114.34.73:3306/neptunsworld_core",

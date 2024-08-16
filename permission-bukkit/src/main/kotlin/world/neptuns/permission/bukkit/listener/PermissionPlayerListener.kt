@@ -1,5 +1,6 @@
 package world.neptuns.permission.bukkit.listener
 
+import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
@@ -23,16 +24,19 @@ class PermissionPlayerListener(private val plugin: NeptunBukkitPlugin) : Listene
     @EventHandler(priority = EventPriority.LOWEST)
     suspend fun onPlayerLogin(event: PlayerLoginEvent) {
         val player = event.player
-        val permissionPlayer = this.permissionPlayerService.getPermissionPlayer(player.uniqueId)
 
-        if (permissionPlayer == null) {
-            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, Component.text("No permission player found!", NamedTextColor.RED))
-            return
+        withContext(this.plugin.asyncDispatcher) {
+            val permissionPlayer = permissionPlayerService.getPermissionPlayer(player.uniqueId)
+
+            if (permissionPlayer == null) {
+                event.disallow(PlayerLoginEvent.Result.KICK_OTHER, Component.text("No permission player found!", NamedTextColor.RED))
+                return@withContext
+            }
+
+            permissionPlayerService.cachePermissionPlayer(permissionPlayer.uuid, permissionPlayer)
+
+            PermissibleInjector.inject(player, BukkitPermissible(player, permissionPlayer))
         }
-
-        this.permissionPlayerService.cachePermissionPlayer(permissionPlayer.uuid, permissionPlayer)
-
-        PermissibleInjector.inject(player, BukkitPermissible(player, permissionPlayer))
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
